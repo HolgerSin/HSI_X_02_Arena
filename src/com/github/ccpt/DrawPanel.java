@@ -8,11 +8,13 @@ import javax.swing.*;
 class DrawPanel extends JPanel {
 
     // Rectangle mr = new Rectangle(500, 500, 100, 100);
-    Point droneDisplayPosition = new Point(500,500);
+    Point displayPosition = new Point(500,500);
     ArrayList<Drone> droneList;
+    ArrayList<Waypoint> waypointList;
 
-    public DrawPanel(ArrayList<Drone> droneList) {
+    public DrawPanel(ArrayList<Drone> droneList, ArrayList<Waypoint> waypointList) {
         this.droneList = droneList;
+        this.waypointList = waypointList;
     }
 
     @Override
@@ -22,19 +24,24 @@ class DrawPanel extends JPanel {
         super.paintComponent(g);
         //g.drawLine(mr.x, mr.y, mr.width, mr.height);
         for (Drone drone : droneList) {
-            droneDisplayPosition.setLocation(translateToDisplayCoordinates(drone.getLocation()));
+            displayPosition.setLocation(translateToDisplayCoordinates(drone.getLocation()));
             g.setColor(drone.getMycolor());
-            drawDrone(g, droneDisplayPosition);
+            drawDrone(g, displayPosition);
+        }
+        for (Waypoint waypoint : waypointList) {
+            displayPosition.setLocation(translateToDisplayCoordinates(waypoint.getLocation()));
+            g.setColor(Color.BLACK);
+            drawWaypoint(g, displayPosition, waypoint.getName());
         }
         
         //mickey(g, mr);
     }
 
-    private Point2D.Double translateToDisplayCoordinates(Point2D.Double point){
-        int height = getSize().height;
-        return new Point2D.Double(point.x, height - point.y);
-
+    private void drawWaypoint(Graphics2D g, Point displayPosition, String string) {
+        g.drawString(string, displayPosition.x, displayPosition.y);
     }
+
+    
 
     public void drawDrone(Graphics2D g, Point pos){
         int size = 10;
@@ -44,7 +51,11 @@ class DrawPanel extends JPanel {
     }
 
     
+    private Point2D.Double translateToDisplayCoordinates(Point2D.Double point){
+        int height = getSize().height;
+        return new Point2D.Double(point.x, height - point.y);
 
+    }
 
 
     public void boxOval(Graphics g, Rectangle bb) {

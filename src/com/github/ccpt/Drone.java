@@ -2,20 +2,21 @@ package com.github.ccpt;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
+// import java.awt.geom.Point2D.Double;
+import java.util.ArrayList;
 
 public class Drone {
 
-    private String name = "Nobody";
+    private String name;
     private Point2D.Double position = new Point2D.Double(100.0, 100.0);
     private double actualSpeed;
-    private int requestedSpeed = 100;
-    private int[] latestCommand = new int[2];
+    protected int requestedSpeed = 100;
+    protected int[] latestCommand = new int[2];
 
     // private int counter = 0;
     private Color mycolor;
 
-    public Drone(String name, Double position, Color mycolor) {
+    public Drone(String name, Point2D.Double position, Color mycolor) {
         this.name = name;
         this.position = position;
         this.mycolor = mycolor;
@@ -65,9 +66,8 @@ public class Drone {
         position.setLocation(position.x + dx, position.y + dy);
     }
 
-    public int[] calculateNewCommand(double timeIndex) {
-        // int[] answer = new int[2];
-        // counter++;
+    public int[] calculateNewCommand(double timeIndex, ArrayList<Waypoint> wayPointList) {
+       
         
         latestCommand[0] = (int)timeIndex*20;
         latestCommand[1] = requestedSpeed;
