@@ -30,7 +30,7 @@ public class BasicDrone extends Drone {
         latestCommandHeading = (int)requiredHeading;
         latestCommandSpeed = requestedSpeed;
 
-        System.out.println("cmdHDG: "+ latestCommandHeading+ " GS: " + (int)getGroundSpeed());
+        // System.out.println("cmdHDG: "+ latestCommandHeading+ " GS: " + (int)getGroundSpeed());
     }
 
     /**

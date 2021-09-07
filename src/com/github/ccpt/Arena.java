@@ -12,17 +12,22 @@ public class Arena {
     private int size_Y;
     private double timeIndex = 0;
     private int ticCounter = 0;  
-    private static final int TICS_PER_SECOND = 100;
+    private static final int TICS_PER_SECOND = 200;
 
     
     
     private int windDirection = 180;
     private int windSpeed = 10;
     
-    private double airDensity = 1.2;   // in kg/m³
-    private double coefficientOfDrag = 0.2;
+    /**Air Density in kg/m³ */
+    private double airDensity = 1.2; 
+    /**Coefficient of Drag / German: Cw Wert */
+    private double cD = 0.2;
+    /**Cross Section Area of Drone in m²
+     * <p>
+     * used to determine the drag force Fd
+     */
     private double crossSectionArea = 1;  // in m²
-    private double Vrel = 1;  // Velocity relative to the surrounding air mass
     
 
 
@@ -47,7 +52,7 @@ public class Arena {
         Drone droneB = new LessStupidDrone("SecondDrone", new Point2D.Double(700,500), Color.RED);
         droneList.add(myDrone);
         droneList.add(droneB);
-        droneList.add( new BasicDrone("BasicDrone", new Point2D.Double(300,500), Color.GREEN));
+        droneList.add( new BasicDrone("BasicDrone", new Point2D.Double(300,500), new Color(0,100,0)));
 
         wayPointList.add(new Waypoint("WP1", 500, 500, 100));
         wayPointList.add(new Waypoint("WP2", 700, 500, 100));
@@ -101,18 +106,7 @@ public class Arena {
     }
 
     private void calculateDronePosition(Drone drone){
-        // drag force in Newton
-         
         
-        double dX;
-        double dY;
-        double dXwind;
-        double dYwind;
-        
-        
-       
-
-    
         if (ticCounter % TICS_PER_SECOND == 0) {           
             drone.calculateNewCommand(timeIndex, wayPointList);      
         }
@@ -122,32 +116,68 @@ public class Arena {
         double commandedThrust = drone.getLatestCommandThrust();
         double droneGroundSpeed = drone.getGroundSpeed();
         double droneGroundTrack = drone.getGroundTrack();
+        int droneThrustHorizontal = drone.getThrustHorizontal();
+        int droneMass = drone.getMass();
 
         // drone.setGroundSpeed(commandedSpeed);
+        
+        // the drone displacement per frame in both axis caused by inertia (previous ground speed+track) 
         double droneTrackX = Math.sin(Math.toRadians(droneGroundTrack))*droneGroundSpeed/TICS_PER_SECOND;
         double droneTrackY = Math.cos(Math.toRadians(droneGroundTrack))*droneGroundSpeed/TICS_PER_SECOND;
 
-        double dragForce;
+        // the wind movement per frame in both axis 
+        double dXwind = Math.sin(Math.toRadians((windDirection+180)%360))*windSpeed/TICS_PER_SECOND;
+        double dYwind = Math.cos(Math.toRadians((windDirection+180)%360))*windSpeed/TICS_PER_SECOND;
 
-        double CommandedVectorChangeX = Math.sin(Math.toRadians(commandedHeading))*commandedSpeed/TICS_PER_SECOND;
-        double CommandedVectorChangeY = Math.cos(Math.toRadians(commandedHeading))*commandedSpeed/TICS_PER_SECOND;
+        // the movement of the air mass per frame relative to the drone in both axis
+        double relVelToWindX = dXwind - droneTrackX;
+        double relVelToWindY = dYwind - droneTrackY;
         
+         // Velocity of the drone relative to the surrounding air mass in m/s
+        double relVelTotal = (Point2D.Double.distance(0, 0, relVelToWindX, relVelToWindY) * TICS_PER_SECOND);
+    
+        // drag force in Newton
+        double dragForce = cD * crossSectionArea * airDensity * relVelTotal * relVelTotal/2;
+        
+        // change of drone speed due to drag in m/s²
+        double dragSpeedChange = dragForce / droneMass;
+
+        // drone displacement per frame in both axis due to drag
+        double dragDisplacementX = (relVelToWindX * (dragSpeedChange / relVelTotal));
+        double dragDisplacementY = (relVelToWindY * (dragSpeedChange / relVelTotal));
+
+        // change of droneSpeed in m/s² due to thrust
+        double thrustSpeedChange = droneThrustHorizontal * commandedThrust / droneMass;
+        // contains the drone displacement in both axis caused by thrust  == change of track/speed due to drone actions
+        double CommandedVectorChangeX = Math.sin(Math.toRadians(commandedHeading))*thrustSpeedChange/TICS_PER_SECOND;
+        double CommandedVectorChangeY = Math.cos(Math.toRadians(commandedHeading))*thrustSpeedChange/TICS_PER_SECOND;
+        
+        if (drone.getName() == "BasicDrone") System.out.println("DragForce: "+ (int)dragForce + " CommandedVectorChangeX: " + CommandedVectorChangeX);
+
         // double CommandedVectorChangeX = Math.sin(Math.toRadians(commandedHeading))*commandedSpeed/TICS_PER_SECOND;
         // double CommandedVectorChangeY = Math.cos(Math.toRadians(commandedHeading))*commandedSpeed/TICS_PER_SECOND;
         
         // dX = Math.sin(Math.toRadians(commandedHeading))*drone.getGroundSpeed()/TICS_PER_SECOND;
         // dY = Math.cos(Math.toRadians(commandedHeading))*drone.getGroundSpeed()/TICS_PER_SECOND;
-        dXwind = Math.sin(Math.toRadians((windDirection+180)%360))*windSpeed/TICS_PER_SECOND;
-        dYwind = Math.cos(Math.toRadians((windDirection+180)%360))*windSpeed/TICS_PER_SECOND;
+
         
-        double totaldX = CommandedVectorChangeX + dXwind;
-        double totaldY = CommandedVectorChangeY + dYwind;
+        
+        // contains the sum of drone displacement in both axis caused by intertia, drag, and thrust 
+        double totaldX = droneTrackX + dragDisplacementX + CommandedVectorChangeX;
+        double totaldY = droneTrackY + dragDisplacementY + CommandedVectorChangeY;
+        
+
+        // double totaldX = CommandedVectorChangeX + dXwind;
+        // double totaldY = CommandedVectorChangeY + dYwind;
         
         drone.setGroundSpeed(Point2D.Double.distance(0, 0, totaldX, totaldY) * TICS_PER_SECOND);
-        // drone.setGroundTrack(groundTrack);
-        drone.translate(CommandedVectorChangeX + dXwind, CommandedVectorChangeY + dYwind);
+        drone.setGroundTrack(calcRotationAngleInDegrees(0, 0, totaldX, totaldY));
+        drone.translate(totaldX, totaldY);
     }
 
+    private static double calcRotationAngleInDegrees(double x1, double y1 , double x2, double y2) {
+        return calcRotationAngleInDegrees(new Point2D.Double(x1, y1), new Point2D.Double(x2,y2));
+    }
 
     /**
      * Calculates the angle from centerPt to targetPt in degrees. The return should

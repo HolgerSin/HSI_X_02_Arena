@@ -26,7 +26,8 @@ class DrawPanel extends JPanel {
         for (Drone drone : droneList) {
             displayPosition.setLocation(translateToDisplayCoordinates(drone.getLocation()));
             g.setColor(drone.getMycolor());
-            drawDrone(g, displayPosition);
+            String[] infoText = {"Speed: " + (int)drone.getGroundSpeed(), "Track: " + (int)drone.getGroundTrack(), "HDG: " + (int)drone.getLatestCommandHeading()};
+            drawDrone(g, displayPosition, infoText);
         }
         for (Waypoint waypoint : waypointList) {
             displayPosition.setLocation(translateToDisplayCoordinates(waypoint.getLocation()));
@@ -43,11 +44,14 @@ class DrawPanel extends JPanel {
 
     
 
-    public void drawDrone(Graphics2D g, Point pos){
+    public void drawDrone(Graphics2D g, Point displayPosition, String[] stringArr){
         int size = 10;
         int halfSize = 10;
         
-        g.fillOval(pos.x - halfSize, pos.y - halfSize, size, size);
+        g.fillOval(displayPosition.x - halfSize, displayPosition.y - halfSize, size, size);
+        g.drawString(stringArr[0], displayPosition.x, displayPosition.y);
+        g.drawString(stringArr[1] +" " + stringArr[2], displayPosition.x, displayPosition.y + 12);
+        
     }
 
     

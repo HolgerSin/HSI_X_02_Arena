@@ -15,19 +15,19 @@ public class Drone {
     // actual speed above ground in m/s
     private double groundSpeed;
 
-    // actual direction of movement in relation to the surface, given in degrees [0-360]
+    // actual direction of movement in relation to the surface, given in degrees
+    // [0-360]
     private double groundTrack;
-
 
     // drone mass in kg
     private int mass = 100;
-  
+
     // available horizontal thrust in Newton
     private int thrustHorizontal = 1000;
 
     protected int requestedSpeed = 100;
-    
-    /*** Latest commands calculated in calculateNewCommand()  ********/
+
+    /*---- Latest commands calculated in calculateNewCommand()  --------*/
     // Heading in degrees [0-360]
     protected int latestCommandHeading = 0;
 
@@ -37,33 +37,29 @@ public class Drone {
     // Thrust commanded by drone in %/100
     protected double latestCommandThrust = 1.0;
 
-
-
     public Drone(String name, Point2D.Double position, Color mycolor) {
         this.name = name;
         this.position = position;
         this.mycolor = mycolor;
     }
 
+    /*------ Getters / Setters -----------------*/
 
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    /*********************** Getters / Setters ****************************/
-
-
-
-    
-
-  
     public double getGroundTrack() {
         return groundTrack;
     }
 
-
     public void setGroundTrack(double groundTrack) {
         this.groundTrack = groundTrack;
     }
-
 
     public int getMass() {
         return mass;
@@ -81,7 +77,6 @@ public class Drone {
         this.thrustHorizontal = thrustHorizontal;
     }
 
-
     public int getLatestCommandHeading() {
         return latestCommandHeading;
     }
@@ -90,26 +85,17 @@ public class Drone {
         return latestCommandSpeed;
     }
 
-    
     public double getLatestCommandThrust() {
         return latestCommandThrust;
     }
-    
-   
 
     public double getGroundSpeed() {
         return groundSpeed;
     }
 
-
-
-
     public void setGroundSpeed(double groundSpeed) {
         this.groundSpeed = groundSpeed;
     }
-
-
-
 
     public Color getMycolor() {
         return mycolor;
@@ -143,6 +129,7 @@ public class Drone {
 
         latestCommandHeading = (int) timeIndex * 20;
         latestCommandSpeed = requestedSpeed;
+        latestCommandThrust = 0;
 
     }
 
