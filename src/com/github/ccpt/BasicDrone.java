@@ -12,7 +12,7 @@ public class BasicDrone extends Drone {
         // TODO Auto-generated constructor stub
     }
 
-    public int[] calculateNewCommand(double timeIndex, ArrayList<Waypoint> wayPointList) {
+    public void calculateNewCommand(double timeIndex, ArrayList<Waypoint> wayPointList) {
         double requiredHeading;
         
 
@@ -21,14 +21,16 @@ public class BasicDrone extends Drone {
             wayPointList.remove(0);
         }
         requiredHeading = calcRotationAngleInDegrees(this.getLocation(), myWaypoint);
-        System.out.println(requiredHeading);
+        
         
         // System.out.println(firstWaypoint);
         // System.out.println(this.getLocation());
         // latestCommand[0] = (((int) timeIndex / 5) % 2) * 180 + 90;
-        latestCommand[0] = (int)requiredHeading;
-        latestCommand[1] = requestedSpeed;
-        return latestCommand;
+        
+        latestCommandHeading = (int)requiredHeading;
+        latestCommandSpeed = requestedSpeed;
+
+        System.out.println("cmdHDG: "+ latestCommandHeading+ " GS: " + (int)getGroundSpeed());
     }
 
     /**

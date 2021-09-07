@@ -8,13 +8,36 @@ import java.util.ArrayList;
 public class Drone {
 
     private String name;
-    private Point2D.Double position = new Point2D.Double(100.0, 100.0);
-    private double actualSpeed;
-    protected int requestedSpeed = 100;
-    protected int[] latestCommand = new int[2];
-
-    // private int counter = 0;
     private Color mycolor;
+
+    private Point2D.Double position = new Point2D.Double(100.0, 100.0);
+
+    // actual speed above ground in m/s
+    private double groundSpeed;
+
+    // actual direction of movement in relation to the surface, given in degrees [0-360]
+    private double groundTrack;
+
+
+    // drone mass in kg
+    private int mass = 100;
+  
+    // available horizontal thrust in Newton
+    private int thrustHorizontal = 1000;
+
+    protected int requestedSpeed = 100;
+    
+    /*** Latest commands calculated in calculateNewCommand()  ********/
+    // Heading in degrees [0-360]
+    protected int latestCommandHeading = 0;
+
+    // Speed in m/s
+    protected int latestCommandSpeed = 0;
+
+    // Thrust commanded by drone in %/100
+    protected double latestCommandThrust = 1.0;
+
+
 
     public Drone(String name, Point2D.Double position, Color mycolor) {
         this.name = name;
@@ -22,21 +45,71 @@ public class Drone {
         this.mycolor = mycolor;
     }
 
-    public int[] getLatestCommand() {
-        return latestCommand;
+
+
+
+    /*********************** Getters / Setters ****************************/
+
+
+
+    
+
+  
+    public double getGroundTrack() {
+        return groundTrack;
     }
 
-    public void setLatestCommand(int[] latestCommand) {
-        this.latestCommand = latestCommand;
+
+    public void setGroundTrack(double groundTrack) {
+        this.groundTrack = groundTrack;
     }
 
-    public double getActualSpeed() {
-        return actualSpeed;
+
+    public int getMass() {
+        return mass;
     }
 
-    public void setActualSpeed(double actualSpeed) {
-        this.actualSpeed = actualSpeed;
+    public void setMass(int mass) {
+        this.mass = mass;
     }
+
+    public int getThrustHorizontal() {
+        return thrustHorizontal;
+    }
+
+    public void setThrustHorizontal(int thrustHorizontal) {
+        this.thrustHorizontal = thrustHorizontal;
+    }
+
+
+    public int getLatestCommandHeading() {
+        return latestCommandHeading;
+    }
+
+    public int getLatestCommandSpeed() {
+        return latestCommandSpeed;
+    }
+
+    
+    public double getLatestCommandThrust() {
+        return latestCommandThrust;
+    }
+    
+   
+
+    public double getGroundSpeed() {
+        return groundSpeed;
+    }
+
+
+
+
+    public void setGroundSpeed(double groundSpeed) {
+        this.groundSpeed = groundSpeed;
+    }
+
+
+
 
     public Color getMycolor() {
         return mycolor;
@@ -54,7 +127,7 @@ public class Drone {
         return position.getY();
     }
 
-    public Point2D.Double getLocation(){
+    public Point2D.Double getLocation() {
         return position;
     }
 
@@ -66,12 +139,11 @@ public class Drone {
         position.setLocation(position.x + dx, position.y + dy);
     }
 
-    public int[] calculateNewCommand(double timeIndex, ArrayList<Waypoint> wayPointList) {
-       
-        
-        latestCommand[0] = (int)timeIndex*20;
-        latestCommand[1] = requestedSpeed;
-        return latestCommand;
+    public void calculateNewCommand(double timeIndex, ArrayList<Waypoint> wayPointList) {
+
+        latestCommandHeading = (int) timeIndex * 20;
+        latestCommandSpeed = requestedSpeed;
+
     }
 
 }

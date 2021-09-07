@@ -12,7 +12,7 @@ public class LessStupidDrone extends Drone {
         // TODO Auto-generated constructor stub
     }
 
-    public int[] calculateNewCommand(double timeIndex, ArrayList<Waypoint> wayPointList) {
+    public void calculateNewCommand(double timeIndex, ArrayList<Waypoint> wayPointList) {
         double requiredHeading;
         
         Waypoint firstWaypoint = wayPointList.get(0);
@@ -40,9 +40,9 @@ public class LessStupidDrone extends Drone {
             
         }
         // latestCommand[0] = (((int) timeIndex / 5) % 2) * 180 + 90;
-        latestCommand[0] = (int)requiredHeading;
-        latestCommand[1] = requestedSpeed;
-        return latestCommand;
+        latestCommandHeading = (int)requiredHeading;
+        latestCommandSpeed = requestedSpeed;
+        
     }
 
 
