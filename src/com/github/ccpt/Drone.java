@@ -35,7 +35,7 @@ public class Drone {
     protected int latestCommandSpeed = 0;
 
     // Thrust commanded by drone in %/100
-    protected double latestCommandThrust = 1.0;
+    protected double latestCommandThrust = 0;
 
     public Drone(String name, Point2D.Double position, Color mycolor) {
         this.name = name;
@@ -127,9 +127,10 @@ public class Drone {
 
     public void calculateNewCommand(double timeIndex, ArrayList<Waypoint> wayPointList) {
 
-        latestCommandHeading = (int) timeIndex * 20;
+        // latestCommandHeading = (int) timeIndex * 20;
+        latestCommandHeading = 90;
         latestCommandSpeed = requestedSpeed;
-        latestCommandThrust = 0;
+        latestCommandThrust = 1;
 
     }
 

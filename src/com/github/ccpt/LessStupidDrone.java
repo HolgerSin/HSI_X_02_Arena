@@ -42,6 +42,7 @@ public class LessStupidDrone extends Drone {
         // latestCommand[0] = (((int) timeIndex / 5) % 2) * 180 + 90;
         latestCommandHeading = (int)requiredHeading;
         latestCommandSpeed = requestedSpeed;
+        latestCommandThrust = 1;
         
     }
 
