@@ -132,6 +132,10 @@ public class Drone {
         latestCommandSpeed = requestedSpeed;
         latestCommandThrust = 1;
 
+        // if (timeIndex > 30) {
+        //     latestCommandThrust = 0;
+        // }
+
     }
 
 }

@@ -12,7 +12,7 @@ public class Arena {
     private int size_Y;
     private double timeIndex = 0.0;
     private int ticCounter = 0;  
-    private static final int TICS_PER_SECOND = 4;
+    private static final int TICS_PER_SECOND = 10;
 
     
     
@@ -133,18 +133,18 @@ public class Arena {
         // change of droneSpeed in m/s² due to thrust
         double thrustSpeedChange = droneThrustHorizontal * commandedThrust / droneMass;
         // contains the drones change in the velocity vector due to acceleration ---- this is not equal to the position change
-        double accelerationVectorX = Math.sin(Math.toRadians(commandedHeading))*thrustSpeedChange/TICS_PER_SECOND;
-        double accelerationVectorY = Math.cos(Math.toRadians(commandedHeading))*thrustSpeedChange/TICS_PER_SECOND;
+        double accelerationVectorX = Math.sin(Math.toRadians(commandedHeading))*thrustSpeedChange/(TICS_PER_SECOND*TICS_PER_SECOND);
+        double accelerationVectorY = Math.cos(Math.toRadians(commandedHeading))*thrustSpeedChange/(TICS_PER_SECOND*TICS_PER_SECOND);
         
         // contains the drone displacement in both axis caused by acceleration (== thrust  == change of track/speed due to drone actions)
-        double accelerationPosChangeX = accelerationVectorX * 0.5 / TICS_PER_SECOND;
-        double accelerationPosChangeY = accelerationVectorY * 0.5 / TICS_PER_SECOND;
+        double accelerationPosChangeX = accelerationVectorX * 0.5;
+        double accelerationPosChangeY = accelerationVectorY * 0.5;
 
         // the movement of the air mass per frame relative to the drone in both axis
-        double relVelToWindX = dXwind - droneTrackX;
-        double relVelToWindY = dYwind - droneTrackY;
-        // double relVelToWindX = dXwind - droneTrackX - commandedVectorChangeX;
-        // double relVelToWindY = dYwind - droneTrackY - commandedVectorChangeY;
+        double relVelToWindX = dXwind - droneTrackX - accelerationPosChangeX;
+        double relVelToWindY = dYwind - droneTrackY - accelerationPosChangeY;
+        // double relVelToWindX = dXwind - droneTrackX;   // + accelerationPosChangeX  ???
+        // double relVelToWindY = dYwind - droneTrackY;
        
         
          // Velocity of the drone relative to the surrounding air mass in m/s
@@ -157,10 +157,12 @@ public class Arena {
         double dragSpeedChange = dragForce / droneMass;
 
         // drone displacement per frame in both axis due to drag
-        double dragDisplacementX = (relVelToWindX * (dragSpeedChange / relVelTotal));
-        double dragDisplacementY = (relVelToWindY * (dragSpeedChange / relVelTotal));
+        double dragDisplacementX = (relVelToWindX * (dragSpeedChange / relVelTotal))/TICS_PER_SECOND;
+        double dragDisplacementY = (relVelToWindY * (dragSpeedChange / relVelTotal))/TICS_PER_SECOND;
 
-        
+        if (drone.getName() == "FirstDrone") System.out.println("timeIndex: "+ String.format("%.2f", timeIndex) + " droneGroundSpeed: " + String.format("%.3f", droneGroundSpeed)
+        + " relVelTotal: " + String.format("%.3f", relVelTotal) + " dragSpeedChange: " + String.format("%.3f", dragSpeedChange) + " dragDisplacementX: " + String.format("%.3f", dragDisplacementX) + " dragDisplacementY: " + String.format("%.3f", dragDisplacementY));    
+    
         
         // if (drone.getName() == "BasicDrone") System.out.println("dragSpeedChange: "+ dragSpeedChange + " relVelTotal: " + relVelTotal);
 
@@ -174,18 +176,28 @@ public class Arena {
         
 
         // if (ticCounter % TICS_PER_SECOND == 0) {           
-            if (drone.getName() == "FirstDrone") System.out.println("timeIndex: "+ String.format("%.2f", timeIndex) + " droneGroundSpeed: " + String.format("%.3f", droneGroundSpeed)
-            + " totaldX: " + String.format("%.3f", totaldX) + " totaldY: " + String.format("%.3f", totaldY)
-            + " droneTrackX: " + String.format("%.3f", droneTrackX) + " dragDisplacementX: " + String.format("%.3f", dragDisplacementX) + " accelerationPosChangeX: " + String.format("%.3f", accelerationPosChangeX));    
+        if (drone.getName() == "FirstDrone") System.out.println("timeIndex: "+ String.format("%.2f", timeIndex) + " droneGroundSpeed: " + String.format("%.3f", droneGroundSpeed)
+            + " totaldX: " + String.format("%.3f", totaldX)
+            + " droneTrackX: " + String.format("%.3f", droneTrackX) 
+            + " dragDisplacementX: " + String.format("%.3f", dragDisplacementX) 
+            + " accelerationPosChangeX: " + String.format("%.3f", accelerationPosChangeX));    
         // }
 
+        if (drone.getName() == "FirstDrone") System.out.println("timeIndex: "+ String.format("%.2f", timeIndex) + " droneGroundSpeed: " + String.format("%.3f", droneGroundSpeed)
+            + " totaldY: " + String.format("%.3f", totaldY)
+            + " droneTrackY: " + String.format("%.3f", droneTrackY) 
+            + " dragDisplacementY: " + String.format("%.3f", dragDisplacementY) 
+            + " accelerationPosChangeY: " + String.format("%.3f", accelerationPosChangeY));    
+    
         double totalSpeedX = droneTrackX + dragDisplacementX + accelerationVectorX;
         double totalSpeedY = droneTrackY + dragDisplacementY + accelerationVectorY;
         
-
+        // if (ticCounter % TICS_PER_SECOND == 0) { 
         if (drone.getName() == "FirstDrone") System.out.println("timeIndex: "+ String.format("%.2f", timeIndex) + " droneGroundSpeed: " + String.format("%.3f", droneGroundSpeed)
-            + " totalSpeedX: " + String.format("%.3f", totalSpeedX) + " totalSpeedY: " + String.format("%.3f", totalSpeedY)
-            + " droneTrackX: " + String.format("%.3f", droneTrackX) + " dragDisplacementX: " + String.format("%.3f", dragDisplacementX) + " accelerationVectorX: " + String.format("%.3f", accelerationVectorX));    
+            + " totalSpeedX: " + String.format("%.3f", totalSpeedX) 
+            + " totalSpeedY: " + String.format("%.3f", totalSpeedY)
+            + " accelerationVectorX: " + String.format("%.3f", accelerationVectorX)
+            + " accelerationVectorY: " + String.format("%.3f", accelerationVectorY));    
         // }
 
         // double totaldX = CommandedVectorChangeX + dXwind;
