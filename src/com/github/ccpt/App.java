@@ -12,31 +12,32 @@ public class App {
 
         Arena myArena = new Arena(1500, 1000);
 
-        // myArena.run();
+        myArena.run();
 
 
-        double droneGroundTrack=90;
-        double droneGroundSpeed=50;
-        double TICS_PER_SECOND=1;
+        // double droneGroundTrack=10;
+        // double droneGroundSpeed=50;
+        // double TICS_PER_SECOND=1;
 
-        double droneTrackX = Math.sin(Math.toRadians(droneGroundTrack)) * droneGroundSpeed / TICS_PER_SECOND;
-        double droneTrackY = Math.cos(Math.toRadians(droneGroundTrack)) * droneGroundSpeed / TICS_PER_SECOND;
+        // double droneTrackX = Math.sin(Math.toRadians(droneGroundTrack)) * droneGroundSpeed / TICS_PER_SECOND;
+        // double droneTrackY = Math.cos(Math.toRadians(droneGroundTrack)) * droneGroundSpeed / TICS_PER_SECOND;
 
-        for (int i = 0; i < 180; i++) {
+        // for (int i = 0; i < 72; i++) {
             
-        
-        int windDirection=120;
-        double windSpeed=10;
-        // the wind movement per frame in both axis
-        double dXwind = Math.sin(Math.toRadians((windDirection + 180) % 360)) * windSpeed / TICS_PER_SECOND;
-        double dYwind = Math.cos(Math.toRadians((windDirection + 180) % 360)) * windSpeed / TICS_PER_SECOND;
+            
+        //     int windDirection=10*i;
+        //     double windSpeed=10;
+        //     // the wind movement per frame in both axis
+        //     double dXwind = Math.sin(Math.toRadians((windDirection + 180) % 360)) * windSpeed / TICS_PER_SECOND;
+        //     double dYwind = Math.cos(Math.toRadians((windDirection + 180) % 360)) * windSpeed / TICS_PER_SECOND;
 
-        double xWind = Math.sin(Math.toRadians(windDirection - droneGroundTrack)) * windSpeed;
-        double hWind = Math.cos(Math.toRadians(windDirection - droneGroundTrack)) * windSpeed;
+        //     double xWind = Math.sin(Math.toRadians(windDirection - droneGroundTrack)) * windSpeed;
+        //     double hWind = Math.cos(Math.toRadians(windDirection - droneGroundTrack)) * windSpeed;
 
-        System.out.println(xWind);
+        //     System.out.println("WindDirection: "+ windDirection + " xWind: " + xWind);
+        //     System.out.println("WindDirection: "+ windDirection + " hWind: " + hWind);
         
-        }
+        // }
         
         System.out.println("Bye");
     }

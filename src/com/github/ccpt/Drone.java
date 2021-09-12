@@ -128,7 +128,7 @@ public class Drone {
     public void calculateNewCommand(double timeIndex, ArrayList<Waypoint> wayPointList) {
 
         // latestCommandHeading = (int) timeIndex * 20;
-        latestCommandHeading = 80;
+        latestCommandHeading = 90;
         latestCommandSpeed = requestedSpeed;
         latestCommandThrust = 1;
 
