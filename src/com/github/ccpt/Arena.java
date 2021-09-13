@@ -17,7 +17,7 @@ public class Arena {
     private static final int TICS_PER_SECOND = 1;
 
     private int windDirection = 180;
-    private int windSpeed = 10;
+    private int windSpeed = 0;
 
     /** Air Density in kg/m³ */
     private double airDensity = 1.2;
@@ -113,10 +113,10 @@ public class Arena {
 
         String droneName = drone.getName();
 
-         // change of droneSpeed in m/s² due to thrust
+         // Acceleration / change of droneSpeed in m/s² due to thrust
          double thrustSpeedChange = droneThrustHorizontal * commandedThrust / droneMass;
          // contains the drones change in the velocity vector due to acceleration ----
-         // this is not equal to the position change
+         // this is not equal to the position change ???
          double accelerationVectorX = Math.sin(Math.toRadians(commandedHeading)) * thrustSpeedChange
                  / (TICS_PER_SECOND * TICS_PER_SECOND);
          double accelerationVectorY = Math.cos(Math.toRadians(commandedHeading)) * thrustSpeedChange
@@ -138,19 +138,19 @@ public class Arena {
                     double dYwind = Math.cos(Math.toRadians((windDirection + 180) % 360)) * windSpeed / TICS_PER_SECOND;
 
         // the air vector of the drone = movement of drone relative to air mass
-        double droneAirVectorX = droneTrackX - dXwind;
-        double droneAirVectorY = droneTrackY - dYwind;
+        // double droneAirVectorX = droneTrackX - dXwind;
+        // double droneAirVectorY = droneTrackY - dYwind;
 
        
         // the movement of the air mass per frame relative to the drone in both axis
-        //             double relVelOfAirToDroneX = dXwind - droneTrackX;// - accelerationPosChangeX;   // using accelerationPosChangeX probably inaccurate, maybe use accelerationVectorX / 3
-        //             double relVelOfAirToDroneY = dYwind - droneTrackY;// - accelerationPosChangeY;
+                    double relVelOfAirToDroneX = dXwind - droneTrackX;// - accelerationPosChangeX;   // using accelerationPosChangeX probably inaccurate, maybe use accelerationVectorX / 3
+                    double relVelOfAirToDroneY = dYwind - droneTrackY;// - accelerationPosChangeY;
         // double relVelOfAirToDroneX = dXwind - droneTrackX - accelerationVectorX;  
         // double relVelOfAirToDroneY = dYwind - droneTrackY - accelerationVectorY;
        
 
         /************************** Third wind drag implementation */
-
+/*
         double relVelOfStillAirToDroneX = - droneAirVectorX;// - accelerationPosChangeX;   // using accelerationPosChangeX probably inaccurate, maybe use accelerationVectorX / 3
         double relVelOfStillAirToDroneY = - droneAirVectorY;// - accelerationPosChangeY;
 
@@ -167,7 +167,7 @@ public class Arena {
         double dragDisplacementX =Math.sin(Math.toRadians(dragDirection)) * dragSpeedChange/ (TICS_PER_SECOND * TICS_PER_SECOND);
         double dragDisplacementY =Math.cos(Math.toRadians(dragDirection)) * dragSpeedChange/ (TICS_PER_SECOND * TICS_PER_SECOND);
 
-
+*/
 
 
 
@@ -199,22 +199,30 @@ public class Arena {
 
 
         /*********************** FIRST wind drag implementation******************* */
-        /*
+        
         // Velocity of the drone relative to the surrounding air mass in m/s
         double relVelTotal = (Point2D.Double.distance(0, 0, relVelOfAirToDroneX, relVelOfAirToDroneY) * TICS_PER_SECOND);
 
         // drag force in Newton
-        double dragForce = cDIDT * crossSectionAreaIDT * airDensity * relVelTotal * relVelTotal / 2;
+        double dragForce = cDfront * crossSectionAreaFwd * airDensity * relVelTotal * relVelTotal / 2;
 
-        // change of drone speed due to drag in m/s²
+        // Deceleration / change of drone speed due to drag in m/s²
         double dragSpeedChange = dragForce / droneMass;
         double dragDirection = calcRotationAngleInDegrees(0, 0, relVelOfAirToDroneX, relVelOfAirToDroneY);
+        
+        double dragDecelerationVectorX =Math.sin(Math.toRadians(dragDirection)) * dragSpeedChange/ (TICS_PER_SECOND * TICS_PER_SECOND);
+        double dragDecelerationVectorY =Math.cos(Math.toRadians(dragDirection)) * dragSpeedChange/ (TICS_PER_SECOND * TICS_PER_SECOND);
         // drone displacement per frame in both axis due to drag
-        double dragDisplacementX =Math.sin(Math.toRadians(dragDirection)) * dragSpeedChange/ (TICS_PER_SECOND * TICS_PER_SECOND);
-        double dragDisplacementY =Math.cos(Math.toRadians(dragDirection)) * dragSpeedChange/ (TICS_PER_SECOND * TICS_PER_SECOND);
-        double dragDisplacementX_old = (relVelOfAirToDroneX * (dragSpeedChange / relVelTotal)) / (TICS_PER_SECOND);
-        double dragDisplacementY_old = (relVelOfAirToDroneY * (dragSpeedChange / relVelTotal)) / (TICS_PER_SECOND);
-        **********************************************/
+        double dragDisplacementX = dragDecelerationVectorX;
+        double dragDisplacementY = dragDecelerationVectorY;
+        
+        // double dragDisplacementX =Math.sin(Math.toRadians(dragDirection)) * dragSpeedChange/ (TICS_PER_SECOND * TICS_PER_SECOND);
+        // double dragDisplacementY =Math.cos(Math.toRadians(dragDirection)) * dragSpeedChange/ (TICS_PER_SECOND * TICS_PER_SECOND);
+        // double dragDisplacementX_old = (relVelOfAirToDroneX * (dragSpeedChange / relVelTotal)) / (TICS_PER_SECOND);
+        // double dragDisplacementY_old = (relVelOfAirToDroneY * (dragSpeedChange / relVelTotal)) / (TICS_PER_SECOND);
+        
+        
+        /***********************************************/
 
         if (drone.getName().equals("FirstDrone"))
             System.out.println("timeIndex: " + String.format("%.2f", timeIndex) 
@@ -245,22 +253,24 @@ public class Arena {
 
         // contains the sum of drone displacement in both axis caused by intertia, drag,
         // and accelaration
-                    // double totaldX = droneTrackX + dragDisplacementX + accelerationPosChangeX;
-                    // double totaldY = droneTrackY + dragDisplacementY + accelerationPosChangeY;
+                    double totaldX = droneTrackX + dragDisplacementX + accelerationPosChangeX;
+                    double totaldY = droneTrackY + dragDisplacementY + accelerationPosChangeY;
         // double totaldX = droneTrackXnew + dX_Xwind + accelerationPosChangeX;
         // double totaldY = droneTrackYnew + dY_Xwind + accelerationPosChangeY;
                     
         // double totalSpeedX = droneTrackXnew + dX_Xwind + accelerationVectorX;
         // double totalSpeedY = droneTrackYnew + dY_Xwind + accelerationVectorY;
-                    // double totalSpeedX = droneTrackX + dragDisplacementX + accelerationVectorX;
-                    // double totalSpeedY = droneTrackY + dragDisplacementY + accelerationVectorY;
+                    double totalSpeedX = droneTrackX + dragDisplacementX + accelerationVectorX;
+                    double totalSpeedY = droneTrackY + dragDisplacementY + accelerationVectorY;
+
+                    // double totalSpeedX = totaldX;
+                    // double totalSpeedY = totaldY;
 
     
-    
-        double totaldX = droneAirVectorX + dragDisplacementX + accelerationPosChangeX + dXwind;
-        double totaldY = droneAirVectorY + dragDisplacementY + accelerationPosChangeY + dYwind;
-        double totalSpeedX = droneAirVectorX + dragDisplacementX + accelerationVectorX + dXwind;
-        double totalSpeedY = droneAirVectorY + dragDisplacementY + accelerationVectorY + dYwind;
+        // double totaldX = droneAirVectorX + dragDisplacementX + accelerationPosChangeX + dXwind;
+        // double totaldY = droneAirVectorY + dragDisplacementY + accelerationPosChangeY + dYwind;
+        // double totalSpeedX = droneAirVectorX + dragDisplacementX + accelerationVectorX + dXwind;
+        // double totalSpeedY = droneAirVectorY + dragDisplacementY + accelerationVectorY + dYwind;
 
 
 
@@ -269,7 +279,7 @@ public class Arena {
             System.out.println("timeIndex: " + String.format("%.2f", timeIndex) 
                     + " droneGroundSpeed: " + String.format("%.3f", droneGroundSpeed) 
                     + " totaldX: " + String.format("%.3f", totaldX)
-                    + " droneAirVectorX: " + String.format("%.3f", droneAirVectorX) 
+                    + " droneTrackX: " + String.format("%.3f", droneTrackX) 
                     + " dragDisplacementX: " + String.format("%.3f", dragDisplacementX) 
                     + " accelerationPosChangeX: " + String.format("%.3f", accelerationPosChangeX)
                     + " dXwind: " + String.format("%.3f", dXwind));
@@ -279,7 +289,7 @@ public class Arena {
             System.out.println("timeIndex: " + String.format("%.2f", timeIndex) 
                     + " droneGroundSpeed: " + String.format("%.3f", droneGroundSpeed) 
                     + " totaldY: " + String.format("%.3f", totaldY)
-                    + " droneAirVectorY: " + String.format("%.3f", droneAirVectorY) 
+                    + " droneAirVectorY: " + String.format("%.3f", droneTrackY) 
                     + " dragDisplacementY: " + String.format("%.3f", dragDisplacementY) 
                     + " accelerationPosChangeY: " + String.format("%.3f", accelerationPosChangeY)
                     + " dYwind: " + String.format("%.3f", dYwind));
