@@ -19,12 +19,15 @@ public class Drone {
     // [0-360]
     private double groundTrack;
 
+    private double currentHeading;
+
     // drone mass in kg
     private int mass = 100;
 
     // available horizontal thrust in Newton
     private int thrustHorizontal = 1000;
 
+    //deprecated
     protected int requestedSpeed = 100;
 
     /*---- Latest commands calculated in calculateNewCommand()  --------*/
@@ -45,10 +48,22 @@ public class Drone {
 
     /*------ Getters / Setters -----------------*/
 
+
+
+    
+
+    public double getCurrentHeading() {
+        return currentHeading;
+    }
+
+    public void setCurrentHeading(double currentHeading) {
+        this.currentHeading = currentHeading;
+    }
+
     public String getName() {
         return name;
     }
-
+    
     public void setName(String name) {
         this.name = name;
     }
