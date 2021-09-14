@@ -143,14 +143,14 @@ public class Arena {
 
        
         // the movement of the air mass per frame relative to the drone in both axis
-                    double relVelOfAirToDroneX = dXwind - droneTrackX;// - accelerationPosChangeX;   // using accelerationPosChangeX probably inaccurate, maybe use accelerationVectorX / 3
-                    double relVelOfAirToDroneY = dYwind - droneTrackY;// - accelerationPosChangeY;
+                    double relVelOfAirToDroneX = dXwind - droneTrackX;//- accelerationPosChangeX;   // using accelerationPosChangeX probably inaccurate, maybe use accelerationVectorX / 3
+                    double relVelOfAirToDroneY = dYwind - droneTrackY;//- accelerationPosChangeY;
         // double relVelOfAirToDroneX = dXwind - droneTrackX - accelerationVectorX;  
         // double relVelOfAirToDroneY = dYwind - droneTrackY - accelerationVectorY;
        
 
         /************************** Third wind drag implementation */
-/*
+/*      // trying to use still air as basis, incomplete attempt
         double relVelOfStillAirToDroneX = - droneAirVectorX;// - accelerationPosChangeX;   // using accelerationPosChangeX probably inaccurate, maybe use accelerationVectorX / 3
         double relVelOfStillAirToDroneY = - droneAirVectorY;// - accelerationPosChangeY;
 
@@ -173,7 +173,7 @@ public class Arena {
 
 
 /*********************** SECOND wind drag implementation******************* */
-/*
+/*      // tried to use crosswind
         double xWind = Math.sin(Math.toRadians(windDirection - droneGroundTrack)) * windSpeed;
         double hWind = Math.cos(Math.toRadians(windDirection - droneGroundTrack)) * windSpeed;
         // true airspeed (but based on Track, not heading) in m/s
@@ -202,7 +202,10 @@ public class Arena {
         
         // Velocity of the drone relative to the surrounding air mass in m/s
         double relVelTotal = (Point2D.Double.distance(0, 0, relVelOfAirToDroneX, relVelOfAirToDroneY) * TICS_PER_SECOND);
-
+        double relVelVector = calcRotationAngleInDegrees(0, 0, relVelOfAirToDroneX, relVelOfAirToDroneY);
+        double xWind = Math.sin(Math.toRadians(relVelVector - droneGroundTrack)) * relVelTotal;
+        double hWind = Math.cos(Math.toRadians(relVelVector - droneGroundTrack)) * relVelTotal;
+       
         // drag force in Newton
         double dragForce = cDfront * crossSectionAreaFwd * airDensity * relVelTotal * relVelTotal / 2;
 
@@ -262,6 +265,8 @@ public class Arena {
         // double totalSpeedY = droneTrackYnew + dY_Xwind + accelerationVectorY;
                     double totalSpeedX = droneTrackX + dragDisplacementX + accelerationVectorX;
                     double totalSpeedY = droneTrackY + dragDisplacementY + accelerationVectorY;
+                    // double totalSpeedX = droneTrackX + dragDisplacementX + accelerationPosChangeX;
+                    // double totalSpeedY = droneTrackY + dragDisplacementY + accelerationPosChangeY;
 
                     // double totalSpeedX = totaldX;
                     // double totalSpeedY = totaldY;
@@ -289,7 +294,7 @@ public class Arena {
             System.out.println("timeIndex: " + String.format("%.2f", timeIndex) 
                     + " droneGroundSpeed: " + String.format("%.3f", droneGroundSpeed) 
                     + " totaldY: " + String.format("%.3f", totaldY)
-                    + " droneAirVectorY: " + String.format("%.3f", droneTrackY) 
+                    + " droneTrackY: " + String.format("%.3f", droneTrackY) 
                     + " dragDisplacementY: " + String.format("%.3f", dragDisplacementY) 
                     + " accelerationPosChangeY: " + String.format("%.3f", accelerationPosChangeY)
                     + " dYwind: " + String.format("%.3f", dYwind));
