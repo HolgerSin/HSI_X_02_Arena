@@ -18,6 +18,7 @@ public class Arena {
 
     private int windDirection = 180;
     private int windSpeed = 0;
+;
 
     /** Air Density in kg/m³ */
     private double airDensity = 1.2;
@@ -216,8 +217,8 @@ public class Arena {
         double dragDecelerationVectorX =Math.sin(Math.toRadians(dragDirection)) * dragSpeedChange/ (TICS_PER_SECOND * TICS_PER_SECOND);
         double dragDecelerationVectorY =Math.cos(Math.toRadians(dragDirection)) * dragSpeedChange/ (TICS_PER_SECOND * TICS_PER_SECOND);
         // drone displacement per frame in both axis due to drag
-        double dragDisplacementX = dragDecelerationVectorX;
-        double dragDisplacementY = dragDecelerationVectorY;
+        double dragDisplacementX = dragDecelerationVectorX*0.5;
+        double dragDisplacementY = dragDecelerationVectorY*0.5;
         
         // double dragDisplacementX =Math.sin(Math.toRadians(dragDirection)) * dragSpeedChange/ (TICS_PER_SECOND * TICS_PER_SECOND);
         // double dragDisplacementY =Math.cos(Math.toRadians(dragDirection)) * dragSpeedChange/ (TICS_PER_SECOND * TICS_PER_SECOND);
@@ -263,8 +264,8 @@ public class Arena {
                     
         // double totalSpeedX = droneTrackXnew + dX_Xwind + accelerationVectorX;
         // double totalSpeedY = droneTrackYnew + dY_Xwind + accelerationVectorY;
-                    double totalSpeedX = droneTrackX + dragDisplacementX + accelerationVectorX;
-                    double totalSpeedY = droneTrackY + dragDisplacementY + accelerationVectorY;
+                    double totalSpeedX = droneTrackX + dragDecelerationVectorX + accelerationVectorX;
+                    double totalSpeedY = droneTrackY + dragDecelerationVectorY + accelerationVectorY;
                     // double totalSpeedX = droneTrackX + dragDisplacementX + accelerationPosChangeX;
                     // double totalSpeedY = droneTrackY + dragDisplacementY + accelerationPosChangeY;
 
