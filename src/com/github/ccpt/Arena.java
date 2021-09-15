@@ -3,6 +3,8 @@ package com.github.ccpt;
 import java.awt.Color;
 // import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -13,28 +15,23 @@ import ch.qos.logback.classic.Logger;
 
 public class Arena {
 
+    
+    private Logger logger = (Logger) LoggerFactory.getLogger(Arena.class);
+    
+    
     private int size_X;
     private int size_Y;
     private double timeIndex = 0.0;
     private int ticCounter = 0;
-    private static final int TICS_PER_SECOND = 1;
+    private static final int TICS_PER_SECOND = 100;
 
     private int windDirection = 180;
     private int windSpeed = 0;
-;
+
 
     /** Air Density in kg/m³ */
     private double airDensity = 1.2;
-    /** Coefficient of Drag from front/ German: Cw Wert */
-    private double cDfront = 0.2;
-    private double cDcross = 0.2;
-    /**
-     * Cross Section Area of Drone in m²
-     * <p>
-     * used to determine the drag force Fd
-     */
-    private double crossSectionAreaFwd = 1; // in m²
-    private double crossSectionAreaCross = 1; // in m²
+    
 
     private ArrayList<Waypoint> wayPointList = new ArrayList<Waypoint>();
     private ArrayList<Drone> droneList = new ArrayList<Drone>();
@@ -45,6 +42,8 @@ public class Arena {
     public Arena(int size_X, int size_Y) {
         this.size_X = size_X;
         this.size_Y = size_Y;
+        logger.setLevel(Level.DEBUG);
+        // logger.error("Error");
     }
 
     public void run() {
@@ -70,21 +69,33 @@ public class Arena {
         f.add(dp);
         f.setVisible(true);
 
+        
+
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+        Instant start1SecIntervall = Instant.now();
+        long timeElapsedPerSimSec = 0;
+        long millisPerTic = (long) 1000 / TICS_PER_SECOND;
+        long delay = millisPerTic;
+        // Instant startTic = Instant.now();
+        // Instant stopTic = Instant.now();
         while (running) {
 
+            // long ticComputationTime =Duration.between(startTic, stopTic).toMillis();
+            // long delay = ticComputationTime > millisPerTic ? 0 : millisPerTic - ticComputationTime;
             try {
-                Thread.sleep(1000 / TICS_PER_SECOND);
+                Thread.sleep(delay);
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            // dp.mr.setBounds(800, 200+i, 200, 200);
+            // startTic = Instant.now();
+            
 
             for (Drone drone : droneList) {
                 calculateDronePosition(drone);
@@ -97,7 +108,19 @@ public class Arena {
             ticCounter++;
             timeIndex = (double) ticCounter / (double) TICS_PER_SECOND;
             dp.repaint();
-
+            // stopTic = Instant.now();
+            if (timeIndex % 1 == 0) {
+                Instant stop1SecInterval = Instant.now();
+                timeElapsedPerSimSec = Duration.between(start1SecIntervall, stop1SecInterval).toMillis();
+                start1SecIntervall = Instant.now();
+                delay = ((timeElapsedPerSimSec-1000)/TICS_PER_SECOND) < delay ? delay - ((timeElapsedPerSimSec-1000)/TICS_PER_SECOND) : 0;
+                logger.debug("Computation time for simulated second #{}: {}ms, Delay: {}", timeIndex, timeElapsedPerSimSec, delay);
+                
+                
+                
+            }
+            
+         
         }
     }
 
@@ -108,7 +131,7 @@ public class Arena {
         }
 
         int commandedHeading = drone.getLatestCommandHeading();
-        int commandedSpeed = drone.getLatestCommandSpeed();
+        // int commandedSpeed = drone.getLatestCommandSpeed();
         double commandedThrust = drone.getLatestCommandThrust();
         double droneGroundSpeed = drone.getGroundSpeed();
         double droneGroundTrack = drone.getGroundTrack();
@@ -121,10 +144,15 @@ public class Arena {
          double thrustSpeedChange = droneThrustHorizontal * commandedThrust / droneMass;
          // contains the drones change in the velocity vector due to acceleration ----
          // this is not equal to the position change ???
-         double accelerationVectorX = Math.sin(Math.toRadians(commandedHeading)) * thrustSpeedChange
+        //  double accelerationVectorX = Math.sin(Math.toRadians(commandedHeading)) * thrustSpeedChange
+        //          / (TICS_PER_SECOND * TICS_PER_SECOND);
+        //  double accelerationVectorY = Math.cos(Math.toRadians(commandedHeading)) * thrustSpeedChange
+        //          / (TICS_PER_SECOND * TICS_PER_SECOND);
+        double accelerationVectorX = drone.getAccelerationVector().x
                  / (TICS_PER_SECOND * TICS_PER_SECOND);
-         double accelerationVectorY = Math.cos(Math.toRadians(commandedHeading)) * thrustSpeedChange
+        double accelerationVectorY = drone.getAccelerationVector().y
                  / (TICS_PER_SECOND * TICS_PER_SECOND);
+        
  
          // contains the drone displacement in both axis caused by acceleration (==
          // thrust == change of track/speed due to drone actions)
@@ -134,8 +162,10 @@ public class Arena {
 
         // the drone displacement per frame in both axis caused by inertia (previous
         // ground speed+track)
-                    double droneTrackX = Math.sin(Math.toRadians(droneGroundTrack)) * droneGroundSpeed / TICS_PER_SECOND;
-                    double droneTrackY = Math.cos(Math.toRadians(droneGroundTrack)) * droneGroundSpeed / TICS_PER_SECOND;
+                    // double droneTrackX = Math.sin(Math.toRadians(droneGroundTrack)) * droneGroundSpeed / TICS_PER_SECOND;
+                    // double droneTrackY = Math.cos(Math.toRadians(droneGroundTrack)) * droneGroundSpeed / TICS_PER_SECOND;
+                    double droneTrackX = vectorEndPoint(droneGroundTrack, droneGroundSpeed).x / TICS_PER_SECOND;
+                    double droneTrackY = vectorEndPoint(droneGroundTrack, droneGroundSpeed).y / TICS_PER_SECOND;
 
         // the wind movement per frame in both axis
                     double dXwind = Math.sin(Math.toRadians((windDirection + 180) % 360)) * windSpeed / TICS_PER_SECOND;
@@ -211,7 +241,7 @@ public class Arena {
         double hWind = Math.cos(Math.toRadians(relVelVector - droneGroundTrack)) * relVelTotal;
        
         // drag force in Newton
-        double dragForce = cDfront * crossSectionAreaFwd * airDensity * relVelTotal * relVelTotal / 2;
+        double dragForce = drone.getcDfront() * drone.getCrossSectionAreaFwd() * airDensity * relVelTotal * relVelTotal / 2;
 
         // Deceleration / change of drone speed due to drag in m/s²
         double dragSpeedChange = dragForce / droneMass;
@@ -230,15 +260,24 @@ public class Arena {
         
         
         /***********************************************/
-
-        if (drone.getName().equals("FirstDrone"))
-            System.out.println("timeIndex: " + String.format("%.2f", timeIndex) 
+        // logger.trace(msg);
+        if (drone.getName().equals("FirstDrone"))            
+            logger.trace("timeIndex: " + String.format("%.2f", timeIndex) 
                     + " GS: " + String.format("%.3f", droneGroundSpeed) 
                     + " TK: " + String.format("%.3f", droneGroundTrack) 
                     + " relVelTotal: " + String.format("%.3f", relVelTotal)
                     + " dragSpeedChange: " + String.format("%.3f", dragSpeedChange) 
                     + " dragDisplacementX: " + String.format("%.3f", dragDisplacementX) 
                     + " dragDisplacementY: " + String.format("%.3f", dragDisplacementY));
+
+        // if (drone.getName().equals("FirstDrone"))
+        //     System.out.println("timeIndex: " + String.format("%.2f", timeIndex) 
+        //             + " GS: " + String.format("%.3f", droneGroundSpeed) 
+        //             + " TK: " + String.format("%.3f", droneGroundTrack) 
+        //             + " relVelTotal: " + String.format("%.3f", relVelTotal)
+        //             + " dragSpeedChange: " + String.format("%.3f", dragSpeedChange) 
+        //             + " dragDisplacementX: " + String.format("%.3f", dragDisplacementX) 
+        //             + " dragDisplacementY: " + String.format("%.3f", dragDisplacementY));
 
 /*        if (drone.getName().equals("FirstDrone"))
         System.out.println("timeIndex: " + String.format("%.2f", timeIndex) 
@@ -284,8 +323,8 @@ public class Arena {
 
 
         // if (ticCounter % TICS_PER_SECOND == 0) {
-            if (drone.getName().equals("FirstDrone"))
-            System.out.println("timeIndex: " + String.format("%.2f", timeIndex) 
+        if (drone.getName().equals("FirstDrone"))
+            logger.trace("timeIndex: " + String.format("%.2f", timeIndex) 
                     + " droneGroundSpeed: " + String.format("%.3f", droneGroundSpeed) 
                     + " totaldX: " + String.format("%.3f", totaldX)
                     + " droneTrackX: " + String.format("%.3f", droneTrackX) 
@@ -295,7 +334,7 @@ public class Arena {
         // }
 
         if (drone.getName().equals("FirstDrone"))
-            System.out.println("timeIndex: " + String.format("%.2f", timeIndex) 
+            logger.trace("timeIndex: " + String.format("%.2f", timeIndex) 
                     + " droneGroundSpeed: " + String.format("%.3f", droneGroundSpeed) 
                     + " totaldY: " + String.format("%.3f", totaldY)
                     + " droneTrackY: " + String.format("%.3f", droneTrackY) 
@@ -326,7 +365,7 @@ public class Arena {
     
         // if (ticCounter % TICS_PER_SECOND == 0) {
         if (drone.getName().equals("FirstDrone"))
-            System.out.println("timeIndex: " + String.format("%.2f", timeIndex) 
+            logger.trace("timeIndex: " + String.format("%.2f", timeIndex) 
                     + " droneGroundSpeed: " + String.format("%.3f", droneGroundSpeed) 
                     + " totalSpeedX: " + String.format("%.3f", totalSpeedX)
                     + " totalSpeedY: " + String.format("%.3f", totalSpeedY) 
@@ -346,7 +385,13 @@ public class Arena {
 
     }
 
-    private static double calcRotationAngleInDegrees(double x1, double y1, double x2, double y2) {
+    public static Point2D.Double vectorEndPoint(double direction, double distance){
+        double x = Math.sin(Math.toRadians(direction)) * distance;
+        double y = Math.cos(Math.toRadians(direction)) * distance;
+        return new Point2D.Double(x, y);
+    }
+
+    public static double calcRotationAngleInDegrees(double x1, double y1, double x2, double y2) {
         return calcRotationAngleInDegrees(new Point2D.Double(x1, y1), new Point2D.Double(x2, y2));
     }
 
@@ -363,7 +408,7 @@ public class Arena {
      * @param targetPt Point we want to calcuate the angle to.
      * @return angle in degrees. This is the angle from centerPt to targetPt.
      */
-    private static double calcRotationAngleInDegrees(Point2D.Double centerPt, Point2D.Double targetPt) {
+    public static double calcRotationAngleInDegrees(Point2D.Double centerPt, Point2D.Double targetPt) {
         // calculate the angle theta from the deltaY and deltaX values
         // (atan2 returns radians values from [-PI,PI])
         // 0 currently points EAST.

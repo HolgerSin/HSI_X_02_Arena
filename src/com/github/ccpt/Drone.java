@@ -27,15 +27,29 @@ public class Drone {
     // available horizontal thrust in Newton
     private int thrustHorizontal = 1000;
 
+    /** Coefficient of Drag from front/ German: Cw Wert */
+    private double cDfront = 0.2;
+    // private double cDcross = 0.2;
+
+
+
+    /**
+     * Cross Section Area of Drone in m²
+     * <p>
+     * used to determine the drag force Fd
+     */
+    private double crossSectionAreaFwd = 1; // in m²
+    // private double crossSectionAreaCross = 1; // in m²
+
     //deprecated
-    protected int requestedSpeed = 100;
+    // protected int requestedSpeed = 100;
 
     /*---- Latest commands calculated in calculateNewCommand()  --------*/
     // Heading in degrees [0-360]
     protected int latestCommandHeading = 0;
 
     // Speed in m/s
-    protected int latestCommandSpeed = 0;
+    // protected int latestCommandSpeed = 0;
 
     // Thrust commanded by drone in %/100
     protected double latestCommandThrust = 0;
@@ -49,8 +63,13 @@ public class Drone {
     /*------ Getters / Setters -----------------*/
 
 
+    public double getcDfront() {
+        return cDfront;
+    }
 
-    
+    public double getCrossSectionAreaFwd() {
+        return crossSectionAreaFwd;
+    }
 
     public double getCurrentHeading() {
         return currentHeading;
@@ -80,25 +99,25 @@ public class Drone {
         return mass;
     }
 
-    public void setMass(int mass) {
-        this.mass = mass;
-    }
+    // public void setMass(int mass) {
+    //     this.mass = mass;
+    // }
 
     public int getThrustHorizontal() {
         return thrustHorizontal;
     }
 
-    public void setThrustHorizontal(int thrustHorizontal) {
-        this.thrustHorizontal = thrustHorizontal;
-    }
+    // public void setThrustHorizontal(int thrustHorizontal) {
+    //     this.thrustHorizontal = thrustHorizontal;
+    // }
 
     public int getLatestCommandHeading() {
         return latestCommandHeading;
     }
 
-    public int getLatestCommandSpeed() {
-        return latestCommandSpeed;
-    }
+    // public int getLatestCommandSpeed() {
+    //     return latestCommandSpeed;
+    // }
 
     public double getLatestCommandThrust() {
         return latestCommandThrust;
@@ -140,11 +159,16 @@ public class Drone {
         position.setLocation(position.x + dx, position.y + dy);
     }
 
+    public Point2D.Double getAccelerationVector(){
+        double thrustSpeedChange = thrustHorizontal * latestCommandThrust / mass;
+        return Arena.vectorEndPoint(latestCommandHeading, thrustSpeedChange);
+    }
+
     public void calculateNewCommand(double timeIndex, ArrayList<Waypoint> wayPointList) {
 
         // latestCommandHeading = (int) timeIndex * 20;
         latestCommandHeading = 90;
-        latestCommandSpeed = requestedSpeed;
+        // latestCommandSpeed = requestedSpeed;
         latestCommandThrust = 1;
 
         // if (timeIndex > 30) {

@@ -24,10 +24,9 @@ class DrawPanel extends JPanel {
         super.paintComponent(g);
         //g.drawLine(mr.x, mr.y, mr.width, mr.height);
         for (Drone drone : droneList) {
-            displayPosition.setLocation(translateToDisplayCoordinates(drone.getLocation()));
-            g.setColor(drone.getMycolor());
-            String[] infoText = {"Speed: " + (int)drone.getGroundSpeed(), "Track: " + (int)drone.getGroundTrack(), "HDG: " + (int)drone.getLatestCommandHeading()};
-            drawDrone(g, displayPosition, infoText);
+            
+            
+            drawDrone(g, drone);
         }
         for (Waypoint waypoint : waypointList) {
             displayPosition.setLocation(translateToDisplayCoordinates(waypoint.getLocation()));
@@ -44,13 +43,22 @@ class DrawPanel extends JPanel {
 
     
 
-    public void drawDrone(Graphics2D g, Point displayPosition, String[] stringArr){
+    public void drawDrone(Graphics2D g, Drone drone){
         int size = 10;
-        int halfSize = 10;
-        
+        int halfSize = size / 2;
+        int vectorLength = 10;
+        g.setColor(drone.getMycolor());
+        displayPosition.setLocation(translateToDisplayCoordinates(drone.getLocation()));
         g.fillOval(displayPosition.x - halfSize, displayPosition.y - halfSize, size, size);
-        g.drawString(stringArr[0], displayPosition.x, displayPosition.y);
-        g.drawString(stringArr[1] +" " + stringArr[2], displayPosition.x, displayPosition.y + 12);
+        String[] infoText = {
+            "Speed: " + (int)drone.getGroundSpeed(), 
+            "Track: " + (int)drone.getGroundTrack()+ " HDG: " + (int)drone.getLatestCommandHeading()};
+        g.drawString(infoText[0], displayPosition.x, displayPosition.y);
+        g.drawString(infoText[1], displayPosition.x, displayPosition.y + 12);
+        Point2D.Double lineTarget = translateToDisplayCoordinates(new Point2D.Double (drone.getLocation().x + drone.getAccelerationVector().x * vectorLength, drone.getLocation().y + drone.getAccelerationVector().y * vectorLength));
+        // int lineTargetX = (int) (displayPosition.x + lineTarget.x * vectorLength);
+        // int lineTargetY = (int) (displayPosition.y + lineTarget.y * vectorLength);
+        g.drawLine(displayPosition.x, displayPosition.y, (int) lineTarget.x, (int) lineTarget.y);
         
     }
 
@@ -62,21 +70,21 @@ class DrawPanel extends JPanel {
     }
 
 
-    public void boxOval(Graphics g, Rectangle bb) {
-        g.fillOval(bb.x, bb.y, bb.width, bb.height);
-    }
+    // public void boxOval(Graphics g, Rectangle bb) {
+    //     g.fillOval(bb.x, bb.y, bb.width, bb.height);
+    // }
 
-    public void mickey(Graphics g, Rectangle bb) {
-        boxOval(g, bb);
+    // public void mickey(Graphics g, Rectangle bb) {
+    //     boxOval(g, bb);
     
-        int dx = bb.width / 2;
-        int dy = bb.height / 2;
-        Rectangle half = new Rectangle(bb.x, bb.y, dx, dy);
+    //     int dx = bb.width / 2;
+    //     int dy = bb.height / 2;
+    //     Rectangle half = new Rectangle(bb.x, bb.y, dx, dy);
     
-        half.translate(-dx / 2, -dy / 2);
-        boxOval(g, half);
+    //     half.translate(-dx / 2, -dy / 2);
+    //     boxOval(g, half);
     
-        half.translate(dx * 2, 0);
-        boxOval(g, half);
-    }
+    //     half.translate(dx * 2, 0);
+    //     boxOval(g, half);
+    // }
 }
