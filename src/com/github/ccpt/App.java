@@ -3,6 +3,10 @@ import java.awt.Rectangle;
 
 import javax.swing.JFrame;
 import java.awt.geom.Point2D;
+// import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 
 public class App {
 
@@ -14,30 +18,21 @@ public class App {
 
         myArena.run();
 
-
-        // double droneGroundTrack=10;
-        // double droneGroundSpeed=50;
-        // double TICS_PER_SECOND=1;
-
-        // double droneTrackX = Math.sin(Math.toRadians(droneGroundTrack)) * droneGroundSpeed / TICS_PER_SECOND;
-        // double droneTrackY = Math.cos(Math.toRadians(droneGroundTrack)) * droneGroundSpeed / TICS_PER_SECOND;
-
-        // for (int i = 0; i < 72; i++) {
-            
-            
-        //     int windDirection=10*i;
-        //     double windSpeed=10;
-        //     // the wind movement per frame in both axis
-        //     double dXwind = Math.sin(Math.toRadians((windDirection + 180) % 360)) * windSpeed / TICS_PER_SECOND;
-        //     double dYwind = Math.cos(Math.toRadians((windDirection + 180) % 360)) * windSpeed / TICS_PER_SECOND;
-
-        //     double xWind = Math.sin(Math.toRadians(windDirection - droneGroundTrack)) * windSpeed;
-        //     double hWind = Math.cos(Math.toRadians(windDirection - droneGroundTrack)) * windSpeed;
-
-        //     System.out.println("WindDirection: "+ windDirection + " xWind: " + xWind);
-        //     System.out.println("WindDirection: "+ windDirection + " hWind: " + hWind);
+        // int test = 5;
         
-        // }
+        // Logger logger = (Logger) LoggerFactory.getLogger(App.class);
+        // logger.setLevel(Level.ALL);
+        // logger.error("Error");
+        // logger.warn("warning");
+        // logger.info("Hello World {}", test);
+        // logger.debug("debug");
+        // logger.trace("trace");
+        
+//         Logger root = (Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+//         root.setLevel(Level.ALL);
+
+
+
         
         System.out.println("Bye");
     }

@@ -7,6 +7,9 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
+import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 
 public class Arena {
 
