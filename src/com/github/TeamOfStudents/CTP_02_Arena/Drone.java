@@ -1,4 +1,4 @@
-package com.github.ccpt;
+package com.github.TeamOfStudents.CTP_02_Arena;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -9,26 +9,29 @@ public class Drone {
 
     private String name;
     private Color mycolor;
-
+    private DroneLogic droneLogic;
     private Point2D.Double position = new Point2D.Double(100.0, 100.0);
+    private CommandSet commandSet = new CommandSet(180, 0.1);
+    
 
-    // actual speed above ground in m/s
+    /** actual speed above ground in m/s */
     private double groundSpeed;
 
-    // actual direction of movement in relation to the surface, given in degrees
-    // [0-360]
+    /** actual direction of movement of drone in relation to the surface, given in degrees [0-360] */ 
     private double groundTrack;
 
-    private double currentHeading;
+    // private double currentHeading;
 
-    // drone mass in kg
+    /**  drone mass in kg */
     private int mass = 100;
 
-    // available horizontal thrust in Newton
+    /** available horizontal thrust in Newton */ 
     private int thrustHorizontal = 1000;
 
     /** Coefficient of Drag from front/ German: Cw Wert */
     private double cDfront = 0.2;
+
+
     // private double cDcross = 0.2;
 
 
@@ -39,28 +42,47 @@ public class Drone {
      * used to determine the drag force Fd
      */
     private double crossSectionAreaFwd = 1; // in m²
+
     // private double crossSectionAreaCross = 1; // in m²
 
-    //deprecated
-    // protected int requestedSpeed = 100;
 
-    /*---- Latest commands calculated in calculateNewCommand()  --------*/
-    // Heading in degrees [0-360]
-    protected int latestCommandHeading = 0;
-
-    // Speed in m/s
-    // protected int latestCommandSpeed = 0;
-
-    // Thrust commanded by drone in %/100
-    protected double latestCommandThrust = 0;
-
-    public Drone(String name, Point2D.Double position, Color mycolor) {
+    public Drone(String name, DroneLogic droneLogic, Point2D.Double position, Color mycolor) {
         this.name = name;
         this.position = position;
         this.mycolor = mycolor;
+        this.droneLogic = droneLogic;
+    }
+
+
+    /*------ Methoden -----------------*/
+
+
+    public void translate(double dx, double dy) {
+        position.setLocation(position.x + dx, position.y + dy);
+    }
+
+    public Point2D.Double getAccelerationVector(){
+        double thrustSpeedChange = thrustHorizontal * commandSet.getThrust() / mass;
+        return Arena.vectorEndPoint(commandSet.getHeading(), thrustSpeedChange);
+    }
+
+    public void calculateNewCommand(double timeIndex, ArrayList<Waypoint> wayPointList) {
+
+        commandSet = droneLogic.calculateNewCommand(timeIndex, wayPointList);
+        
     }
 
     /*------ Getters / Setters -----------------*/
+
+
+    public CommandSet getCommandSet() {
+        return commandSet;
+    }
+
+    public void setCommandSet(CommandSet commandSet) {
+        this.commandSet = commandSet;
+    }
+
 
 
     public double getcDfront() {
@@ -70,7 +92,7 @@ public class Drone {
     public double getCrossSectionAreaFwd() {
         return crossSectionAreaFwd;
     }
-
+/*
     public double getCurrentHeading() {
         return currentHeading;
     }
@@ -78,7 +100,7 @@ public class Drone {
     public void setCurrentHeading(double currentHeading) {
         this.currentHeading = currentHeading;
     }
-
+*/
     public String getName() {
         return name;
     }
@@ -112,7 +134,7 @@ public class Drone {
     // }
 
     public int getLatestCommandHeading() {
-        return latestCommandHeading;
+        return commandSet.getHeading();
     }
 
     // public int getLatestCommandSpeed() {
@@ -120,7 +142,7 @@ public class Drone {
     // }
 
     public double getLatestCommandThrust() {
-        return latestCommandThrust;
+        return commandSet.getThrust();
     }
 
     public double getGroundSpeed() {
@@ -155,26 +177,5 @@ public class Drone {
         position.setLocation(x, y);
     }
 
-    public void translate(double dx, double dy) {
-        position.setLocation(position.x + dx, position.y + dy);
-    }
-
-    public Point2D.Double getAccelerationVector(){
-        double thrustSpeedChange = thrustHorizontal * latestCommandThrust / mass;
-        return Arena.vectorEndPoint(latestCommandHeading, thrustSpeedChange);
-    }
-
-    public void calculateNewCommand(double timeIndex, ArrayList<Waypoint> wayPointList) {
-
-        // latestCommandHeading = (int) timeIndex * 20;
-        latestCommandHeading = 90;
-        // latestCommandSpeed = requestedSpeed;
-        latestCommandThrust = 1;
-
-        // if (timeIndex > 30) {
-        //     latestCommandThrust = 0;
-        // }
-
-    }
 
 }

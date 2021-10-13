@@ -1,12 +1,12 @@
-package com.github.ccpt;
-import java.awt.Rectangle;
+package com.github.TeamOfStudents.CTP_02_Arena;
+// import java.awt.Rectangle;
 
-import javax.swing.JFrame;
-import java.awt.geom.Point2D;
+// import javax.swing.JFrame;
+// import java.awt.geom.Point2D;
 // import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
+// import org.slf4j.LoggerFactory;
+// import ch.qos.logback.classic.Level;
+// import ch.qos.logback.classic.Logger;
 
 public class App {
 

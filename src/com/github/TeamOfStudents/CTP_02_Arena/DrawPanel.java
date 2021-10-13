@@ -1,4 +1,4 @@
-package com.github.ccpt;
+package com.github.TeamOfStudents.CTP_02_Arena;
 import java.awt.*;
 import java.util.ArrayList;
 import java.awt.geom.Point2D;
