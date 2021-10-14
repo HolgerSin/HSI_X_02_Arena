@@ -5,6 +5,8 @@ import java.awt.geom.Point2D;
 // import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 
+import com.github.TeamOfStudents.CTP_02_Arena.DroneLogic.DroneLogic;
+
 public class Drone {
 
     private String name;
@@ -12,6 +14,7 @@ public class Drone {
     private DroneLogic droneLogic;
     private Point2D.Double position = new Point2D.Double(100.0, 100.0);
     private CommandSet commandSet = new CommandSet(180, 0.1);
+    private int credits = 0;
     
 
     /** actual speed above ground in m/s */
@@ -23,7 +26,7 @@ public class Drone {
     // private double currentHeading;
 
     /**  drone mass in kg */
-    private int mass = 100;
+    private int mass = 10;
 
     /** available horizontal thrust in Newton */ 
     private int thrustHorizontal = 1000;
@@ -66,15 +69,33 @@ public class Drone {
         return Arena.vectorEndPoint(commandSet.getHeading(), thrustSpeedChange);
     }
 
-    public void calculateNewCommand(double timeIndex, ArrayList<Waypoint> wayPointList) {
+    public void calculateNewCommand(double timeIndex, Waypoint wayPoint) {
 
-        commandSet = droneLogic.calculateNewCommand(timeIndex, wayPointList);
+        commandSet = droneLogic.calculateNewCommand(timeIndex, wayPoint);
         
+    }
+
+    public void changeCredits(int delta) {
+        credits = credits + delta;
     }
 
     /*------ Getters / Setters -----------------*/
 
 
+
+
+
+    public int getCredits() {
+        return credits;
+    }
+
+
+    public void setCredits(int credits) {
+        this.credits = credits;
+    }
+
+
+    
     public CommandSet getCommandSet() {
         return commandSet;
     }
@@ -170,6 +191,11 @@ public class Drone {
     }
 
     public Point2D.Double getLocation() {
+        return position;
+    }
+
+    public Point2D.Double getLocationFromDroneLogic() {
+        credits -= 10;
         return position;
     }
 

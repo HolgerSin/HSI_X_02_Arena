@@ -1,9 +1,12 @@
-package com.github.TeamOfStudents.CTP_02_Arena;
+package com.github.TeamOfStudents.CTP_02_Arena.DroneLogic;
 
 // import java.awt.Color;
 import java.awt.geom.Point2D;
 // import java.awt.Point;
 import java.util.ArrayList;
+
+import com.github.TeamOfStudents.CTP_02_Arena.CommandSet;
+import com.github.TeamOfStudents.CTP_02_Arena.Waypoint;
 
 public class LessStupidDroneLogic extends DroneLogic {
 
@@ -12,11 +15,11 @@ public class LessStupidDroneLogic extends DroneLogic {
      * super(name, position, mycolor); // TODO Auto-generated constructor stub }
      */
 
-    public CommandSet calculateNewCommand(double timeIndex, ArrayList<Waypoint> wayPointList) {
+    public CommandSet calculateNewCommand(double timeIndex, Waypoint waypoint) {
         double requiredHeading;
         Point2D.Double position = super.getLocation();
 
-        Waypoint firstWaypoint = wayPointList.get(0);
+        Waypoint firstWaypoint = waypoint;
         // requiredHeading = calcRotationAngleInDegrees(this.getLocation(),
         // firstWaypoint);
         // System.out.println(requiredHeading);

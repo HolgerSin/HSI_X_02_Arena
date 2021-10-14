@@ -9,6 +9,11 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
+import com.github.TeamOfStudents.CTP_02_Arena.DroneLogic.BasicDroneLogic;
+import com.github.TeamOfStudents.CTP_02_Arena.DroneLogic.DroneLogic;
+import com.github.TeamOfStudents.CTP_02_Arena.DroneLogic.LessStupidDroneLogic;
+import com.github.TeamOfStudents.CTP_02_Arena.DroneLogic.StupidDroneLogic;
+
 import org.slf4j.LoggerFactory;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -31,6 +36,7 @@ public class Arena {
 
     private ArrayList<Waypoint> wayPointList = new ArrayList<Waypoint>();
     private ArrayList<Drone> droneList = new ArrayList<Drone>();
+    RaceTrackMission raceTrackMission;
 
     private boolean running = true;
 
@@ -44,8 +50,8 @@ public class Arena {
 
     public void run() {
 
-        createDrone("FirstDrone", new StupidDroneLogic(), new Point2D.Double(500, 500), Color.BLUE);
-        createDrone("SecondDrone", new LessStupidDroneLogic(), new Point2D.Double(700, 500), Color.RED);
+        createDrone("StupidDrone", new StupidDroneLogic(), new Point2D.Double(500, 500), Color.BLUE);
+        createDrone("LessStupidDrone", new LessStupidDroneLogic(), new Point2D.Double(700, 500), Color.RED);
         createDrone("BasicDrone", new BasicDroneLogic(), new Point2D.Double(300, 500), new Color(0, 100, 0));
         
 
@@ -56,8 +62,10 @@ public class Arena {
         wayPointList.add(new Waypoint("WP5", size_X - 200, size_Y - 200, 100));
         wayPointList.add(new Waypoint("WP6", 200, size_Y - 200, 100));
 
+        raceTrackMission = new RaceTrackMission(wayPointList, droneList);
+
         JFrame f = new JFrame();
-        DrawPanel dp = new DrawPanel(droneList, wayPointList);
+        DrawPanel dp = new DrawPanel(droneList, wayPointList, raceTrackMission);
 
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(size_X, size_Y);
@@ -127,7 +135,7 @@ public class Arena {
     private void calculateDronePosition(Drone drone) {
 
         if (ticCounter % TICS_PER_SECOND == 0) {
-            drone.calculateNewCommand(timeIndex, wayPointList);
+            drone.calculateNewCommand(timeIndex, raceTrackMission.getNextWayPoint(drone));
         }
 
         int commandedHeading = drone.getLatestCommandHeading();
