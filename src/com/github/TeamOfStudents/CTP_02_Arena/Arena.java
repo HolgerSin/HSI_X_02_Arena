@@ -126,6 +126,20 @@ public class Arena {
 
         }
     }
+
+    public void manualDroneControl(Drone drone, String order) {
+        int commandedHeading = drone.getLatestCommandHeading();
+        double commandedThrust = drone.getLatestCommandThrust();
+        switch (order) {
+            case "thrust+":
+                drone.setCommandSet(new CommandSet(commandedHeading, commandedThrust));
+                break;
+        
+            default:
+                break;
+        }
+        
+    }
    
     private void createDrone(String name, DroneLogic droneLogic, Point2D.Double position, Color color){
         // DroneLogic newDroneLogic = new StupidDroneLogic();

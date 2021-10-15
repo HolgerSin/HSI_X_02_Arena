@@ -22,6 +22,7 @@ class DrawPanel extends JPanel implements KeyListener {
     ArrayList<Drone> droneList;
     ArrayList<Waypoint> waypointList;
     RaceTrackMission raceTrackMission;
+    private Drone selectDrone;
 
     public DrawPanel(ArrayList<Drone> droneList, ArrayList<Waypoint> waypointList, RaceTrackMission raceTrackMission) {
         this.droneList = droneList;
@@ -30,6 +31,11 @@ class DrawPanel extends JPanel implements KeyListener {
         addKeyListener(this);
         this.setFocusable(true);
         logger.setLevel(Level.DEBUG);
+        for (Drone drone : droneList) {
+            if (drone.getName() == "ManualDrone") {
+                selectDrone = drone;
+            }
+        }
     }
 
   /*  
@@ -48,14 +54,14 @@ class DrawPanel extends JPanel implements KeyListener {
         // System.out.println("---");
     }
     public void keyPressed(KeyEvent e) {
-        logger.debug("Taste: {}, Code: {}, Tastenposition: {}", e.getKeyChar(), e.getKeyCode(), e.getKeyLocation());
+        // logger.debug("Taste: {}, Code: {}, Tastenposition: {}", e.getKeyChar(), e.getKeyCode(), e.getKeyLocation());
         // System.out.println("Taste: " + e.getKeyChar() + ", Code: " + e.getKeyCode());
         // System.out.println("Tastenposition: " + e.getKeyLocation());
         // System.out.println("---");
     }
 
     public void keyReleased(KeyEvent e) {
-        logger.debug("KeyReleased: Taste: {}, Code: {}, \n---", e.getKeyChar(), e.getKeyCode());
+        // logger.debug("KeyReleased: Taste: {}, Code: {}, \n---", e.getKeyChar(), e.getKeyCode());
         // System.out.println("KeyReleased: ");
         // if(e.getKeyCode() == KeyEvent.VK_SPACE){
         //     System.out.println("Programmabbruch!");
