@@ -6,8 +6,16 @@ import java.util.HashMap;
 import java.awt.geom.Point2D;
 
 import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-class DrawPanel extends JPanel {
+import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+
+class DrawPanel extends JPanel implements KeyListener {
+
+    private Logger logger = (Logger) LoggerFactory.getLogger(DrawPanel.class);
 
     // Rectangle mr = new Rectangle(500, 500, 100, 100);
     Point displayPosition = new Point(500, 500);
@@ -19,6 +27,42 @@ class DrawPanel extends JPanel {
         this.droneList = droneList;
         this.waypointList = waypointList;
         this.raceTrackMission = raceTrackMission;
+        addKeyListener(this);
+        this.setFocusable(true);
+        logger.setLevel(Level.DEBUG);
+    }
+
+  /*  
+  public boolean isFocusTraversable() {
+    return true;
+  }*/
+
+    public void keyTyped(KeyEvent e) {
+        logger.debug("KeyTyped: {}", e.getKeyChar()  == KeyEvent.CHAR_UNDEFINED ? "Kein Unicode-Character gedr\u00FCckt!" : e.getKeyChar() + " gedr\u00FCckt!");
+        // System.out.println("KeyTyped: ");
+        // if(e.getKeyChar() == KeyEvent.CHAR_UNDEFINED){
+        //     System.out.println("Kein Unicode-Character gedr\u00FCckt!");
+        // }else{
+        //     System.out.println(e.getKeyChar() + " gedr\u00FCckt!");
+        // }
+        // System.out.println("---");
+    }
+    public void keyPressed(KeyEvent e) {
+        logger.debug("Taste: {}, Code: {}, Tastenposition: {}", e.getKeyChar(), e.getKeyCode(), e.getKeyLocation());
+        // System.out.println("Taste: " + e.getKeyChar() + ", Code: " + e.getKeyCode());
+        // System.out.println("Tastenposition: " + e.getKeyLocation());
+        // System.out.println("---");
+    }
+
+    public void keyReleased(KeyEvent e) {
+        logger.debug("KeyReleased: Taste: {}, Code: {}, \n---", e.getKeyChar(), e.getKeyCode());
+        // System.out.println("KeyReleased: ");
+        // if(e.getKeyCode() == KeyEvent.VK_SPACE){
+        //     System.out.println("Programmabbruch!");
+        //     System.exit(0);
+        // }    
+        // System.out.println("Taste: " + e.getKeyChar() + ", Code: " + e.getKeyCode());
+        // System.out.println("---");
     }
 
     @Override

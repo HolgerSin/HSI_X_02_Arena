@@ -43,8 +43,10 @@ public class Arena {
     public Arena(int size_X, int size_Y) {
         this.size_X = size_X;
         this.size_Y = size_Y;
+        logger.setLevel(Level.INFO);
         // logger.setLevel(Level.DEBUG);
-        logger.setLevel(Level.TRACE);
+        // logger.setLevel(Level.TRACE);
+
 
     }
 
@@ -64,13 +66,13 @@ public class Arena {
 
         raceTrackMission = new RaceTrackMission(wayPointList, droneList);
 
-        JFrame f = new JFrame();
+        JFrame frame = new JFrame();
         DrawPanel dp = new DrawPanel(droneList, wayPointList, raceTrackMission);
 
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setSize(size_X, size_Y);
-        f.add(dp);
-        f.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(size_X, size_Y);
+        frame.add(dp);
+        frame.setVisible(true);
 
         try {
             Thread.sleep(2000);
