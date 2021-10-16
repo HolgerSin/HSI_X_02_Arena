@@ -1,6 +1,6 @@
 package com.github.TeamOfStudents.CTP_02_Arena.DroneLogic;
 
-import java.util.ArrayList;
+// import java.util.ArrayList;
 
 import com.github.TeamOfStudents.CTP_02_Arena.CommandSet;
 import com.github.TeamOfStudents.CTP_02_Arena.Drone;
@@ -17,6 +17,11 @@ public abstract class DroneLogic {
         
         return drone.getLocationFromDroneLogic();
     }
+
+    protected CommandSet getCommandSet(){
+        return drone.getCommandSet();
+    }
+
 /*
     public Drone getDrone() {
         return drone;

@@ -3,12 +3,17 @@ package com.github.TeamOfStudents.CTP_02_Arena;
 import java.awt.*;
 import java.awt.geom.Point2D;
 // import java.awt.geom.Point2D.Double;
-import java.util.ArrayList;
+// import java.util.ArrayList;
 
 import com.github.TeamOfStudents.CTP_02_Arena.DroneLogic.DroneLogic;
 
 public class Drone {
 
+    public static final String COMMAND_THRUST_INCREASE = "COMMAND_THRUST+";
+    public static final String COMMAND_THRUST_DECREASE = "COMMAND_THRUST-";
+    public static final String COMMAND_LEFT_10 = "COMMAND_LEFT_10";
+    public static final String COMMAND_RIGHT_10 = "COMMAND_RIGHT_10";
+    
     private String name;
     private Color mycolor;
     private DroneLogic droneLogic;
@@ -77,6 +82,29 @@ public class Drone {
 
     public void changeCredits(int delta) {
         credits = credits + delta;
+    }
+
+    public void manualDroneControl(String order) {
+        int commandedHeading = commandSet.getHeading();
+        double commandedThrust = commandSet.getThrust();
+        switch (order) {
+            case Drone.COMMAND_THRUST_INCREASE:
+                commandSet = new CommandSet(commandedHeading, commandedThrust + 0.1);
+                break;
+            case Drone.COMMAND_THRUST_DECREASE:
+                commandSet = new CommandSet(commandedHeading, commandedThrust - 0.1);
+                break;
+            case Drone.COMMAND_LEFT_10:
+                commandSet = new CommandSet(commandedHeading - 10, commandedThrust);
+                break;
+            case Drone.COMMAND_RIGHT_10:
+                commandSet = new CommandSet(commandedHeading + 10, commandedThrust);
+                break;
+        
+            default:
+                break;
+        }
+        
     }
 
     /*------ Getters / Setters -----------------*/

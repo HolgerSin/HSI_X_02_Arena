@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import com.github.TeamOfStudents.CTP_02_Arena.DroneLogic.BasicDroneLogic;
 import com.github.TeamOfStudents.CTP_02_Arena.DroneLogic.DroneLogic;
 import com.github.TeamOfStudents.CTP_02_Arena.DroneLogic.LessStupidDroneLogic;
+import com.github.TeamOfStudents.CTP_02_Arena.DroneLogic.ManualDroneLogic;
 import com.github.TeamOfStudents.CTP_02_Arena.DroneLogic.StupidDroneLogic;
 
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class Arena {
     private static final int TICS_PER_SECOND = 50;
 
     private int windDirection = 180;
-    private int windSpeed = 0;
+    private int windSpeed = 20;
 
     /** Air Density in kg/m³ */
     private double airDensity = 1.2;
@@ -55,6 +56,7 @@ public class Arena {
         createDrone("StupidDrone", new StupidDroneLogic(), new Point2D.Double(500, 500), Color.BLUE);
         createDrone("LessStupidDrone", new LessStupidDroneLogic(), new Point2D.Double(700, 500), Color.RED);
         createDrone("BasicDrone", new BasicDroneLogic(), new Point2D.Double(300, 500), new Color(0, 100, 0));
+        createDrone("ManualDrone", new ManualDroneLogic(), new Point2D.Double(900, 500), Color.ORANGE);
         
 
         wayPointList.add(new Waypoint("WP1", 500, 500, 100));
@@ -127,19 +129,7 @@ public class Arena {
         }
     }
 
-    public void manualDroneControl(Drone drone, String order) {
-        int commandedHeading = drone.getLatestCommandHeading();
-        double commandedThrust = drone.getLatestCommandThrust();
-        switch (order) {
-            case "thrust+":
-                drone.setCommandSet(new CommandSet(commandedHeading, commandedThrust));
-                break;
-        
-            default:
-                break;
-        }
-        
-    }
+    
    
     private void createDrone(String name, DroneLogic droneLogic, Point2D.Double position, Color color){
         // DroneLogic newDroneLogic = new StupidDroneLogic();

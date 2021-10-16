@@ -45,6 +45,27 @@ class DrawPanel extends JPanel implements KeyListener {
 
     public void keyTyped(KeyEvent e) {
         logger.debug("KeyTyped: {}", e.getKeyChar()  == KeyEvent.CHAR_UNDEFINED ? "Kein Unicode-Character gedr\u00FCckt!" : e.getKeyChar() + " gedr\u00FCckt!");
+        // selectDrone.manualDroneControl(e.getKeyChar());
+        switch (e.getKeyChar()) {
+            case 'a':
+                selectDrone.manualDroneControl(Drone.COMMAND_LEFT_10);
+                break;
+            case 'd':
+                selectDrone.manualDroneControl(Drone.COMMAND_RIGHT_10);
+                break;
+            case 'w':
+                selectDrone.manualDroneControl(Drone.COMMAND_THRUST_INCREASE);
+                break;
+            case 's':
+                selectDrone.manualDroneControl(Drone.COMMAND_THRUST_DECREASE);
+                break;
+        
+                                
+            default:
+            logger.info("Key ohne Zuweisung: {}", e.getKeyChar()  == KeyEvent.CHAR_UNDEFINED ? "Kein Unicode-Character gedr\u00FCckt!" : e.getKeyChar() + " gedr\u00FCckt!");
+                break;
+        }
+        
         // System.out.println("KeyTyped: ");
         // if(e.getKeyChar() == KeyEvent.CHAR_UNDEFINED){
         //     System.out.println("Kein Unicode-Character gedr\u00FCckt!");
@@ -87,9 +108,7 @@ class DrawPanel extends JPanel implements KeyListener {
             g.setColor(Color.BLACK);
             drawWaypoint(g, displayPosition, waypoint.getName());
         }
-        for (Drone drone : droneList) {
-            
-        }
+        
 
         // mickey(g, mr);
     }
