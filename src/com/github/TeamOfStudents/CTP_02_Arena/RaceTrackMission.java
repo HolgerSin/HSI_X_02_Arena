@@ -3,7 +3,7 @@ package com.github.TeamOfStudents.CTP_02_Arena;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.awt.geom.Point2D;
-// import java.util.Hashtable;
+
 
 public class RaceTrackMission {
     private ArrayList<Waypoint> wayPointList;

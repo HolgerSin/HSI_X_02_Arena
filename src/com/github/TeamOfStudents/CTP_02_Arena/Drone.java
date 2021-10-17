@@ -31,7 +31,7 @@ public class Drone {
     // private double currentHeading;
 
     /**  drone mass in kg */
-    private int mass = 10;
+    private int mass = 100;
 
     /** available horizontal thrust in Newton */ 
     private int thrustHorizontal = 1000;

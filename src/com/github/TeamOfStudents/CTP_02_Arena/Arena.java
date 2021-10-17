@@ -30,7 +30,7 @@ public class Arena {
     private static final int TICS_PER_SECOND = 50;
 
     private int windDirection = 180;
-    private int windSpeed = 20;
+    private int windSpeed = 0;
 
     /** Air Density in kg/m³ */
     private double airDensity = 1.2;
@@ -44,8 +44,8 @@ public class Arena {
     public Arena(int size_X, int size_Y) {
         this.size_X = size_X;
         this.size_Y = size_Y;
-        logger.setLevel(Level.INFO);
-        // logger.setLevel(Level.DEBUG);
+        // logger.setLevel(Level.INFO);
+        logger.setLevel(Level.DEBUG);
         // logger.setLevel(Level.TRACE);
 
 
@@ -56,7 +56,8 @@ public class Arena {
         createDrone("StupidDrone", new StupidDroneLogic(), new Point2D.Double(500, 500), Color.BLUE);
         createDrone("LessStupidDrone", new LessStupidDroneLogic(), new Point2D.Double(700, 500), Color.RED);
         createDrone("BasicDrone", new BasicDroneLogic(), new Point2D.Double(300, 500), new Color(0, 100, 0));
-        createDrone("ManualDrone", new ManualDroneLogic(), new Point2D.Double(900, 500), Color.ORANGE);
+        createDrone("ManualDrone_1", new ManualDroneLogic(), new Point2D.Double(900, 500), Color.ORANGE);
+        createDrone("ManualDrone_2", new ManualDroneLogic(), new Point2D.Double(1100, 500), Color.MAGENTA);
         
 
         wayPointList.add(new Waypoint("WP1", 500, 500, 100));
@@ -140,8 +141,9 @@ public class Arena {
 
     private void calculateDronePosition(Drone drone) {
 
+        Waypoint nextWaypoint = raceTrackMission.getNextWayPoint(drone);
         if (ticCounter % TICS_PER_SECOND == 0) {
-            drone.calculateNewCommand(timeIndex, raceTrackMission.getNextWayPoint(drone));
+            drone.calculateNewCommand(timeIndex, nextWaypoint);
         }
 
         int commandedHeading = drone.getLatestCommandHeading();

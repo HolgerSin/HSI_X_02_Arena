@@ -6,12 +6,36 @@ public class Waypoint extends Point2D.Double {
 
     private String name;
     private int value;
+    private int radius = 50;
 
-    public Waypoint(String name, double x, double y, int value) {
+    public Waypoint(String name, double x, double y,  int value) {
         super(x, y);
         this.name = name;
         this.value = value;
     }
+
+
+    
+    public Waypoint(String name, double x, double y, int value, int radius) {
+        super(x, y);
+        this.name = name;
+        this.value = value;
+        this.radius = radius;
+    }
+
+
+
+    public int getRadius() {
+        return radius;
+    }
+
+
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+
 
     public String getName() {
         return name;

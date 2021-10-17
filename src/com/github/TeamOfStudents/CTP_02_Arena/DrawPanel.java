@@ -22,7 +22,8 @@ class DrawPanel extends JPanel implements KeyListener {
     ArrayList<Drone> droneList;
     ArrayList<Waypoint> waypointList;
     RaceTrackMission raceTrackMission;
-    private Drone selectDrone;
+    private Drone manualDrone_1;
+    private Drone manualDrone_2;
 
     public DrawPanel(ArrayList<Drone> droneList, ArrayList<Waypoint> waypointList, RaceTrackMission raceTrackMission) {
         this.droneList = droneList;
@@ -30,12 +31,16 @@ class DrawPanel extends JPanel implements KeyListener {
         this.raceTrackMission = raceTrackMission;
         addKeyListener(this);
         this.setFocusable(true);
-        logger.setLevel(Level.DEBUG);
+        
         for (Drone drone : droneList) {
-            if (drone.getName() == "ManualDrone") {
-                selectDrone = drone;
+            if (drone.getName() == "ManualDrone_1") {
+                manualDrone_1 = drone;
+            }
+            if (drone.getName() == "ManualDrone_2") {
+                manualDrone_2 = drone;
             }
         }
+        logger.setLevel(Level.DEBUG);
     }
 
   /*  
@@ -44,27 +49,7 @@ class DrawPanel extends JPanel implements KeyListener {
   }*/
 
     public void keyTyped(KeyEvent e) {
-        logger.debug("KeyTyped: {}", e.getKeyChar()  == KeyEvent.CHAR_UNDEFINED ? "Kein Unicode-Character gedr\u00FCckt!" : e.getKeyChar() + " gedr\u00FCckt!");
-        // selectDrone.manualDroneControl(e.getKeyChar());
-        switch (e.getKeyChar()) {
-            case 'a':
-                selectDrone.manualDroneControl(Drone.COMMAND_LEFT_10);
-                break;
-            case 'd':
-                selectDrone.manualDroneControl(Drone.COMMAND_RIGHT_10);
-                break;
-            case 'w':
-                selectDrone.manualDroneControl(Drone.COMMAND_THRUST_INCREASE);
-                break;
-            case 's':
-                selectDrone.manualDroneControl(Drone.COMMAND_THRUST_DECREASE);
-                break;
-        
-                                
-            default:
-            logger.info("Key ohne Zuweisung: {}", e.getKeyChar()  == KeyEvent.CHAR_UNDEFINED ? "Kein Unicode-Character gedr\u00FCckt!" : e.getKeyChar() + " gedr\u00FCckt!");
-                break;
-        }
+        // logger.debug("KeyTyped: {}", e.getKeyChar()  == KeyEvent.CHAR_UNDEFINED ? "Kein Unicode-Character gedr\u00FCckt!" : e.getKeyChar() + " gedr\u00FCckt!");
         
         // System.out.println("KeyTyped: ");
         // if(e.getKeyChar() == KeyEvent.CHAR_UNDEFINED){
@@ -76,20 +61,44 @@ class DrawPanel extends JPanel implements KeyListener {
     }
     public void keyPressed(KeyEvent e) {
         // logger.debug("Taste: {}, Code: {}, Tastenposition: {}", e.getKeyChar(), e.getKeyCode(), e.getKeyLocation());
-        // System.out.println("Taste: " + e.getKeyChar() + ", Code: " + e.getKeyCode());
-        // System.out.println("Tastenposition: " + e.getKeyLocation());
-        // System.out.println("---");
+
+        switch (e.getKeyCode()) {
+            case 65:
+                if(manualDrone_1 != null) manualDrone_1.manualDroneControl(Drone.COMMAND_LEFT_10);
+                break;
+            case 68:
+                if(manualDrone_1 != null) manualDrone_1.manualDroneControl(Drone.COMMAND_RIGHT_10);
+                break;
+            case 87:
+                if(manualDrone_1 != null) manualDrone_1.manualDroneControl(Drone.COMMAND_THRUST_INCREASE);
+                break;
+            case 83:
+                if(manualDrone_1 != null) manualDrone_1.manualDroneControl(Drone.COMMAND_THRUST_DECREASE);
+                break;
+            
+            case 37:
+                if(manualDrone_2 != null) manualDrone_2.manualDroneControl(Drone.COMMAND_LEFT_10);
+                break;
+            case 39:
+                if(manualDrone_2 != null) manualDrone_2.manualDroneControl(Drone.COMMAND_RIGHT_10);
+                break;
+            case 38:
+                if(manualDrone_2 != null) manualDrone_2.manualDroneControl(Drone.COMMAND_THRUST_INCREASE);
+                break;
+            case 40:
+                if(manualDrone_2 != null) manualDrone_2.manualDroneControl(Drone.COMMAND_THRUST_DECREASE);
+                break;
+        
+                                
+            default:
+            logger.info("Taste ohne Zuweisung gedrückt: {}, Code: {}, Tastenposition: {}", e.getKeyChar(), e.getKeyCode(), e.getKeyLocation());
+                break;
+        }
+
     }
 
     public void keyReleased(KeyEvent e) {
-        // logger.debug("KeyReleased: Taste: {}, Code: {}, \n---", e.getKeyChar(), e.getKeyCode());
-        // System.out.println("KeyReleased: ");
-        // if(e.getKeyCode() == KeyEvent.VK_SPACE){
-        //     System.out.println("Programmabbruch!");
-        //     System.exit(0);
-        // }    
-        // System.out.println("Taste: " + e.getKeyChar() + ", Code: " + e.getKeyCode());
-        // System.out.println("---");
+        // logger.debug("KeyReleased: Taste: {}, Code: {}, \n---", e.getKeyChar(), e.getKeyCode());  
     }
 
     @Override
@@ -101,28 +110,48 @@ class DrawPanel extends JPanel implements KeyListener {
         for (Drone drone : droneList) {
 
             drawDrone(g, drone);
-            drawMissionTargets(g, drone, raceTrackMission.getNextWaypointMap());
         }
         for (Waypoint waypoint : waypointList) {
-            displayPosition.setLocation(translateToDisplayCoordinates(waypoint.getLocation()));
-            g.setColor(Color.BLACK);
-            drawWaypoint(g, displayPosition, waypoint.getName());
+            
+            drawWaypoint(g, waypoint);
         }
         
 
         // mickey(g, mr);
     }
 
-    private void drawMissionTargets(Graphics2D g, Drone drone, HashMap<Drone, Waypoint> nextWaypointMap) {
-        int size = 10;
-        int halfSize = size / 2;
-        g.setColor(drone.getMycolor());
-        displayPosition.setLocation(translateToDisplayCoordinates(nextWaypointMap.get(drone).getLocation()));
-        g.fillRect(displayPosition.x - halfSize, displayPosition.y - halfSize, size, size);
-    }
+    
 
-    private void drawWaypoint(Graphics2D g, Point displayPosition, String string) {
-        g.drawString(string, displayPosition.x, displayPosition.y);
+    private void drawWaypoint(Graphics2D g, Waypoint waypoint) {
+        displayPosition.setLocation(translateToDisplayCoordinates(waypoint.getLocation()));
+        g.setColor(Color.BLACK);
+        int lineCount;
+        String[] infoText = { 
+            waypoint.getName(),
+            "Value: " + waypoint.getValue(),
+            "Target"
+        };
+        for (lineCount = 0; lineCount < infoText.length; lineCount++) {
+            g.drawString(infoText[lineCount], displayPosition.x, displayPosition.y + lineCount * 12);
+        }
+        int size = 10;
+        
+        HashMap<Drone, Waypoint> nextWaypointMap = raceTrackMission.getNextWaypointMap();
+        for (Drone drone : droneList) {
+            if (nextWaypointMap.get(drone) == waypoint) {
+                g.setColor(drone.getMycolor());
+                // displayPosition.setLocation(translateToDisplayCoordinates(nextWaypointMap.get(drone).getLocation()));
+                g.fillRect(displayPosition.x, displayPosition.y + (lineCount - 1) * 12 + 2, size, size);
+                lineCount++;
+            }   
+        }
+        
+        // paint radius
+        displayPosition.setLocation(translateToDisplayCoordinates(waypoint.getLocation()));
+        g.setColor(Color.BLACK);
+        int radius = waypoint.getRadius();
+        size = radius * 2;
+        g.drawOval(displayPosition.x - radius, displayPosition.y - radius, size, size);
     }
 
     public void drawDrone(Graphics2D g, Drone drone) {
