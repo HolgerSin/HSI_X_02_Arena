@@ -63,30 +63,36 @@ class DrawPanel extends JPanel implements KeyListener {
         // logger.debug("Taste: {}, Code: {}, Tastenposition: {}", e.getKeyChar(), e.getKeyCode(), e.getKeyLocation());
 
         switch (e.getKeyCode()) {
-            case 65:
+            case 65:    //a
                 if(manualDrone_1 != null) manualDrone_1.manualDroneControl(Drone.COMMAND_LEFT_10);
                 break;
-            case 68:
+            case 68:    //d
                 if(manualDrone_1 != null) manualDrone_1.manualDroneControl(Drone.COMMAND_RIGHT_10);
                 break;
-            case 87:
+            case 87:    //w
                 if(manualDrone_1 != null) manualDrone_1.manualDroneControl(Drone.COMMAND_THRUST_INCREASE);
                 break;
-            case 83:
+            case 83:    //s
                 if(manualDrone_1 != null) manualDrone_1.manualDroneControl(Drone.COMMAND_THRUST_DECREASE);
                 break;
+            case 81:    //q
+                if(manualDrone_1 != null) manualDrone_1.manualDroneControl(Drone.COMMAND_TOGGLE_CONTROL);
+                break;
             
-            case 37:
+            case 37:    //arrow left
                 if(manualDrone_2 != null) manualDrone_2.manualDroneControl(Drone.COMMAND_LEFT_10);
                 break;
-            case 39:
+            case 39:    //arrow right
                 if(manualDrone_2 != null) manualDrone_2.manualDroneControl(Drone.COMMAND_RIGHT_10);
                 break;
-            case 38:
+            case 38:    //arrow up
                 if(manualDrone_2 != null) manualDrone_2.manualDroneControl(Drone.COMMAND_THRUST_INCREASE);
                 break;
-            case 40:
+            case 40:    //arrow down
                 if(manualDrone_2 != null) manualDrone_2.manualDroneControl(Drone.COMMAND_THRUST_DECREASE);
+                break;
+            case 17:    //Ctrl right
+                if(manualDrone_2 != null) manualDrone_2.manualDroneControl(Drone.COMMAND_TOGGLE_CONTROL);
                 break;
         
                                 
@@ -164,8 +170,9 @@ class DrawPanel extends JPanel implements KeyListener {
         String[] infoText = { 
             "Speed: " + (int) drone.getGroundSpeed(),
             "Track: " + (int) drone.getGroundTrack() + " HDG: " + (int) drone.getLatestCommandHeading(),
-            drone.getName(),
-            "Credits: " + drone.getCredits() 
+            "Credits: " + drone.getCredits() ,
+            drone.getControlType(),
+            drone.getName()
         };
         for (int i = 0; i < infoText.length; i++) {
             g.drawString(infoText[i], displayPosition.x, displayPosition.y + i * 12);

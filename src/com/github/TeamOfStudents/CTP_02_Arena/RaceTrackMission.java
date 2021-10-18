@@ -9,7 +9,7 @@ public class RaceTrackMission {
     private ArrayList<Waypoint> wayPointList;
     private ArrayList<Drone> droneList;
     private HashMap <Drone, Waypoint> nextWaypointMap = new HashMap<>();
-    private int requiredMaxDistance = 50;
+    // private int requiredMaxDistance = 50;
 
     public RaceTrackMission(ArrayList<Waypoint> wayPointList, ArrayList<Drone> droneList) {
         this.wayPointList = wayPointList;
@@ -23,7 +23,7 @@ public class RaceTrackMission {
         Waypoint nextWaypoint = nextWaypointMap.get(drone);
         Point2D.Double position = drone.getLocation();
 
-        if (position.distance(nextWaypoint) < requiredMaxDistance) {
+        if (position.distance(nextWaypoint) < nextWaypoint.getRadius()) {
             if (wayPointList.indexOf(nextWaypoint) + 1 < wayPointList.size()) {
                 nextWaypointMap.put(drone, wayPointList.get(wayPointList.indexOf(nextWaypoint)+1));
             } else {

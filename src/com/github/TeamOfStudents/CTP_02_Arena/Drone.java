@@ -7,12 +7,25 @@ import java.awt.geom.Point2D;
 
 import com.github.TeamOfStudents.CTP_02_Arena.DroneLogic.DroneLogic;
 
+
+import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+
+
 public class Drone {
+
+    private Logger logger = (Logger) LoggerFactory.getLogger(Drone.class);
 
     public static final String COMMAND_THRUST_INCREASE = "COMMAND_THRUST+";
     public static final String COMMAND_THRUST_DECREASE = "COMMAND_THRUST-";
     public static final String COMMAND_LEFT_10 = "COMMAND_LEFT_10";
     public static final String COMMAND_RIGHT_10 = "COMMAND_RIGHT_10";
+    public static final String COMMAND_TOGGLE_CONTROL = "COMMAND_TOGGLE_CONTROL";
+
+    public static final String CONTROL_TYPE_AUTO = "AUTO";
+    public static final String CONTROL_TYPE_MANUAL = "MANUAL";
+
     
     private String name;
     private Color mycolor;
@@ -20,6 +33,7 @@ public class Drone {
     private Point2D.Double position = new Point2D.Double(100.0, 100.0);
     private CommandSet commandSet = new CommandSet(180, 0.1);
     private int credits = 0;
+    private String controlType = CONTROL_TYPE_AUTO;
     
 
     /** actual speed above ground in m/s */
@@ -53,12 +67,17 @@ public class Drone {
 
     // private double crossSectionAreaCross = 1; // in m²
 
+    
 
     public Drone(String name, DroneLogic droneLogic, Point2D.Double position, Color mycolor) {
         this.name = name;
         this.position = position;
         this.mycolor = mycolor;
         this.droneLogic = droneLogic;
+
+        logger.setLevel(Level.INFO);
+        // logger.setLevel(Level.DEBUG);
+        // logger.setLevel(Level.TRACE);
     }
 
 
@@ -75,8 +94,9 @@ public class Drone {
     }
 
     public void calculateNewCommand(double timeIndex, Waypoint wayPoint) {
-
-        commandSet = droneLogic.calculateNewCommand(timeIndex, wayPoint);
+        if (controlType == CONTROL_TYPE_AUTO){
+            commandSet = droneLogic.calculateNewCommand(timeIndex, wayPoint);    
+        }
         
     }
 
@@ -100,8 +120,15 @@ public class Drone {
             case Drone.COMMAND_RIGHT_10:
                 commandSet = new CommandSet(commandedHeading + 10, commandedThrust);
                 break;
-        
+            case Drone.COMMAND_TOGGLE_CONTROL:
+                if (controlType == CONTROL_TYPE_AUTO) {
+                    controlType = CONTROL_TYPE_MANUAL;
+                } else {
+                    controlType = CONTROL_TYPE_AUTO;
+                }
+                break;
             default:
+                logger.warn("Drone received non existing order! (manualDroneControl");
                 break;
         }
         
@@ -113,10 +140,21 @@ public class Drone {
 
 
 
+    public String getControlType() {
+        return controlType;
+    }
+
+
+    public void setControlType(String controlType) {
+        this.controlType = controlType;
+    }
+
+    
+
+
     public int getCredits() {
         return credits;
     }
-
 
     public void setCredits(int credits) {
         this.credits = credits;
